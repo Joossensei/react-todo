@@ -25,7 +25,7 @@
   margin-right: 12px;
   width: 18px;
   height: 18px;
-  cursor: default;
+  cursor: pointer;
   accent-color: #007bff;
 }
 
@@ -75,14 +75,6 @@
 .delete-btn:hover {
   background-color: #c82333;
   transform: translateY(-1px);
-}
-
-/* Disabled state for static buttons */
-.edit-btn:disabled,
-.delete-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
 }
 
 /* Responsive design */
