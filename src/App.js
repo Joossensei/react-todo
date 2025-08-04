@@ -1,23 +1,27 @@
-import logo from "./logo.svg";
+import React from "react";
 import "./App.css";
+import TodoItem from "./components/TodoItem";
 
 function App() {
+  // Static todo data for demonstration
+  const staticTodos = [
+    { id: 1, text: "Learn React", completed: false },
+    { id: 2, text: "Build Todo App", completed: true },
+    { id: 3, text: "Write Tests", completed: false },
+  ];
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="container">
+        <h1>Static Todo Items Demo</h1>
+        <p>These are static TodoItem components - no interactivity</p>
+
+        <ul className="todo-list">
+          {staticTodos.map((todo) => (
+            <TodoItem key={todo.id} todo={todo} />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
