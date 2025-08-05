@@ -42,12 +42,12 @@ function App() {
 
         <footer>
           <p>
-            <a href="https://github.com/joossenpai">
+            <a href="https://github.com/Joossensei">
               <FaGithub />
             </a>
           </p>
           <p>
-            Made by <a href="https://github.com/joossenpai">Joost Both</a>
+            Made by <a href="https://github.com/Joossensei">Joost Both</a>
           </p>
         </footer>
       </div>
