@@ -15,6 +15,7 @@ const TodoList = (props) => {
   const [filter, setFilter] = useState("all");
   const [filteredTodos, setFilteredTodos] = useState([]);
   const [search, setSearch] = useState("");
+  const [invalidAdd, setInvalidAdd] = useState(false);
 
   // Function to toggle the completed status of a todo
   const toggleTodo = (id) => {
@@ -33,7 +34,17 @@ const TodoList = (props) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
+  const handleEditTodo = (id, text) => {
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, text } : todo)));
+  };
+
   const handleAddTodo = () => {
+    if (newTodo.trim() === "") {
+      setInvalidAdd(true);
+      return;
+    } else {
+      setInvalidAdd(false);
+    }
     setIsAddingTodo(false);
     setTodos([
       ...todos,
@@ -101,20 +112,21 @@ const TodoList = (props) => {
           <option value="completed">Completed</option>
           <option value="incomplete">Incomplete</option>
         </select>
-        <div className="add-todo-container">
-          {/* Add todo button */}
-          <button
-            className="add-todo-btn"
-            onClick={() => setIsAddingTodo(!isAddingTodo)}
-          >
-            Add Todo
-          </button>
-        </div>
+        {/* Add todo button */}
+        <button
+          className="add-todo-btn"
+          onClick={() => setIsAddingTodo(!isAddingTodo)}
+        >
+          Add Todo
+        </button>
       </div>
       <div className="add-todo-input-container">
+        <div className="add-todo-form-error-container">
+          {invalidAdd && <p id="invalid-add-text">Todo is required</p>}
+        </div>
         {/* If the add button is clicked, show the input field to add a todo */}
         {isAddingTodo && (
-          <form onSubmit={handleAddTodo} className="add-todo-form">
+          <div className="add-todo-form">
             <input
               className="add-todo-input"
               type="text"
@@ -122,12 +134,11 @@ const TodoList = (props) => {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onSubmit={handleAddTodo}
-              required
             ></input>
-            <button className="add-todo-form-btn" type="submit">
+            <button className="add-todo-form-btn" onClick={handleAddTodo}>
               Add +
             </button>
-          </form>
+          </div>
         )}
       </div>
       <ul className="todo-list">
@@ -143,6 +154,7 @@ const TodoList = (props) => {
               todo={todo}
               toggleTodo={toggleTodo}
               deleteTodo={deleteTodo}
+              editTodo={handleEditTodo}
             />
           ))}
         {todos.length > 0 &&
@@ -154,6 +166,7 @@ const TodoList = (props) => {
               todo={todo}
               toggleTodo={toggleTodo}
               deleteTodo={deleteTodo}
+              editTodo={handleEditTodo}
             />
           ))}
         {filteredTodos.length === 0 && isFiltering && <p>No todos found</p>}

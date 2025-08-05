@@ -1,3 +1,18 @@
+.todo-item-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.todo-item-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .todo-item {
   display: flex;
   align-items: center;
@@ -77,6 +92,61 @@
   transform: translateY(-1px);
 }
 
+.edit-form-container {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.edit-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.edit-form button {
+  padding: 8px;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 0 4px 4px 0;
+  color: white;
+  background-color: #007bff;
+  cursor: pointer;
+  width: 15%;
+}
+
+.edit-form-error-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 100%;
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+#invalid-edit-text {
+  color: red;
+  font-size: 12px;
+  background-color: #f8d7da;
+  padding: 5px;
+  border-radius: 5px;
+}
+
 /* Responsive design */
 @media (max-width: 480px) {
   .todo-item {
@@ -85,6 +155,21 @@
 
   .todo-text {
     font-size: 14px;
+  }
+
+  .edit-form {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .edit-form button {
+    width: 100%;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .edit-form input {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
   }
 
   .todo-actions {
