@@ -21,7 +21,7 @@ const AddTodo = ({
       setInvalidAdd(true);
       return;
     }
-    
+
     // If validation passes, clear the error and call the parent's onAddTodo
     setInvalidAdd(false);
     onAddTodo();

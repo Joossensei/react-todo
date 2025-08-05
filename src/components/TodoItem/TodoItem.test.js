@@ -2,6 +2,12 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import TodoItem from "./index";
+import {
+  FaChevronDown,
+  FaMinus,
+  FaChevronUp,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
 // Mock data for testing
 const mockTodo = {
@@ -16,7 +22,51 @@ const mockCompletedTodo = {
   completed: true,
 };
 
+// Mock prioritys
+const mockPriority = {
+  LOW: {
+    value: "low",
+    label: "Low",
+    color: "#6b7280",
+    icon: <FaChevronDown />,
+    bgColor: "#f3f4f6",
+  },
+  MEDIUM: {
+    value: "medium",
+    label: "Medium",
+    color: "#f59e0b",
+    icon: <FaMinus />,
+    bgColor: "#fef3c7",
+  },
+  HIGH: {
+    value: "high",
+    label: "High",
+    color: "#ef4444",
+    icon: <FaChevronUp />,
+    bgColor: "#fee2e2",
+  },
+  URGENT: {
+    value: "urgent",
+    label: "Urgent",
+    color: "#dc2626",
+    icon: <FaExclamationTriangle />,
+    bgColor: "#fecaca",
+  },
+};
+
+const mock = jest.genMockFromModule("../../utils/priorityUtils");
+// Is still undefined no clue why
+mock.getPriorityByValue = jest.fn((value) => {
+  return mockPriority[value];
+});
+
+import { getPriorityByValue } from "../../utils/priorityUtils";
+
 describe("TodoItem Component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("renders todo text correctly", () => {
     render(<TodoItem todo={mockTodo} />);
     expect(screen.getByText("Learn React Testing")).toBeInTheDocument();
