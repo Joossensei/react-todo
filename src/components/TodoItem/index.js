@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./TodoItem.css";
 import { validateTodo } from "../../utils/todoUtils";
 import { getPriorityByValue } from "../../utils/priorityUtils";
+import { PRIORITY } from "../../constants";
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
   // States for editing a todo
@@ -9,10 +10,33 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
   const [invalidEdit, setInvalidEdit] = useState(false);
   // State for the edited text
   const [editedText, setEditedText] = useState(todo.text);
+  // State for the edited priority
+  const [newPriority, setNewPriority] = useState(todo.priority);
+  const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
+  const priorityDropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        priorityDropdownRef.current &&
+        !priorityDropdownRef.current.contains(event.target)
+      ) {
+        setIsPriorityDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Function to edit a todo
   const handleEdit = () => {
     setIsEditing(!isEditing);
+    setIsPriorityDropdownOpen(false);
+    setNewPriority(todo.priority);
     setInvalidEdit(false);
   };
 
@@ -26,13 +50,23 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
       // If the edited text is not empty, set the invalid edit state to false and edit the todo
       setInvalidEdit(false);
       setIsEditing(false);
-      editTodo(todo.id, editedText);
+      setIsPriorityDropdownOpen(false);
+      editTodo(todo.id, editedText, newPriority);
     }
+  };
+
+  // Function to handle priority selection
+  const handlePrioritySelect = (priorityValue) => {
+    setNewPriority(priorityValue);
+    setIsPriorityDropdownOpen(false);
+    editTodo(todo.id, todo.text, priorityValue);
   };
 
   return (
     // If the todo is completed, add the completed class to the todo item
-    <li className={`todo-item ${todo.completed ? "completed" : ""}`}>
+    <li
+      className={`todo-item ${todo.completed ? "completed" : ""} ${isPriorityDropdownOpen ? "dropdown-open" : ""}`}
+    >
       <div className="todo-item-container-wrapper">
         <div className="todo-item-container">
           <input
@@ -61,7 +95,10 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
           {isEditing && (
             <div
               className="edit-form"
-              style={{ marginTop: isEditing ? "10px" : "0px" }}
+              style={{
+                marginTop: isEditing ? "10px" : "0px",
+                marginBottom: isEditing ? "10px" : "0px",
+              }}
             >
               <input
                 type="text"
@@ -76,22 +113,64 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
                 }}
               />
               {/* If the edited text is not empty, show the save button */}
-              <button onClick={handleSave}>Save</button>
+              <button className="save-btn" onClick={handleSave}>
+                Save
+              </button>
+              <button
+                className="cancel-btn"
+                onClick={() => {
+                  setIsEditing(false);
+                  setIsPriorityDropdownOpen(false);
+                  setNewPriority(todo.priority);
+                }}
+              >
+                Cancel
+              </button>
             </div>
           )}
         </div>
-        <div
-          className="todo-item-priority"
-          style={{
-            backgroundColor: getPriorityByValue(todo.priority).bgColor,
-          }}
-        >
-          <div className="todo-item-priority-icon">
-            {getPriorityByValue(todo.priority).icon}
+        <div className="todo-item-priority-container" ref={priorityDropdownRef}>
+          <div
+            className="todo-item-priority"
+            style={{
+              backgroundColor: getPriorityByValue(
+                isEditing ? newPriority : todo.priority,
+              ).bgColor,
+            }}
+            // If we are editing the todo make the priority clickable for the user to change the priority
+            onClick={() => {
+              setIsPriorityDropdownOpen(!isPriorityDropdownOpen);
+            }}
+          >
+            <div className="todo-item-priority-icon">
+              {getPriorityByValue(isEditing ? newPriority : todo.priority).icon}
+            </div>
+            <span className="todo-item-priority-label">
+              {
+                getPriorityByValue(isEditing ? newPriority : todo.priority)
+                  .label
+              }
+            </span>
           </div>
-          <span className="todo-item-priority-label">
-            {getPriorityByValue(todo.priority).label}
-          </span>
+          {isPriorityDropdownOpen && (
+            <div className="todo-item-priority-dropdown">
+              {Object.values(PRIORITY).map((priority) => (
+                <div
+                  key={priority.value}
+                  className="todo-item-priority-option"
+                  style={{
+                    backgroundColor: priority.bgColor,
+                  }}
+                  onClick={() => handlePrioritySelect(priority.value)}
+                >
+                  <div className="todo-item-priority-icon">{priority.icon}</div>
+                  <span className="todo-item-priority-label">
+                    {priority.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </li>

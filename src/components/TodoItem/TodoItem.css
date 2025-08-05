@@ -21,11 +21,16 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
   border: 1px solid #e9ecef;
+  position: relative;
 }
 
 .todo-item:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-1px);
+}
+
+.todo-item.dropdown-open {
+  z-index: 1001;
 }
 
 .todo-item.completed {
@@ -116,9 +121,9 @@
   margin: 0;
 }
 
-.edit-form button {
+.save-btn {
   padding: 8px;
-  margin: 0;
+  margin: 0 10px 0 0;
   border: 1px solid #ccc;
   border-radius: 0 4px 4px 0;
   color: white;
@@ -153,6 +158,13 @@
   border-radius: 5px;
   width: 20%;
   gap: 5px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.todo-item-priority:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .todo-item-priority-icon {
@@ -169,6 +181,74 @@
   align-items: center;
   justify-content: center;
   flex: 1;
+}
+
+.todo-item-priority-container {
+  position: relative;
+  width: 100%;
+}
+
+.todo-item-priority-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  margin-top: 2px;
+  animation: dropdownFadeIn 0.2s ease;
+  z-index: 1002;
+  width: 20%;
+}
+
+.todo-item-priority-option {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.todo-item-priority-option:last-child {
+  border-bottom: none;
+}
+
+.todo-item-priority-option:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cancel-btn {
+  background-color: #f0f0f0;
+  padding: 8px;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
 }
 
 /* Responsive design */

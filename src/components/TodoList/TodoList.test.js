@@ -4,41 +4,69 @@ import "@testing-library/jest-dom";
 import TodoList from "./index";
 
 describe("TodoList Component", () => {
+  // Define mock todos
+  const standardTodos = [
+    {
+      id: 1,
+      text: "Learn React",
+      completed: false,
+      priority: "urgent",
+    },
+    {
+      id: 2,
+      text: "Build Todo App",
+      completed: true,
+      priority: "high",
+    },
+    {
+      id: 3,
+      text: "Write Tests",
+      completed: false,
+      priority: "medium",
+    },
+    {
+      id: 4,
+      text: "Learn React Testing",
+      completed: false,
+      priority: "low",
+    },
+  ];
+
   test("renders todo list correctly", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List" standardTodos={standardTodos} />);
     expect(screen.getByText("Todo List")).toBeInTheDocument();
   });
 
   test("renders todos correctly", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List" standardTodos={standardTodos} />);
     expect(screen.getByText("Learn React")).toBeInTheDocument();
   });
 
   test("renders add todo form correctly", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List" standardTodos={standardTodos} />);
     expect(screen.getByText("Add Todo")).toBeInTheDocument();
   });
 
   test("renders filter form correctly", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 
   test("renders search form correctly", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     expect(screen.getByPlaceholderText("Search todos")).toBeInTheDocument();
   });
 
   //--------------------------- Add todo form tests --------------------------- //
   test("renders add todo form correctly", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const addTodoButton = screen.getByText("Add Todo");
     fireEvent.click(addTodoButton);
     expect(screen.getByText("Add +")).toBeInTheDocument();
   });
 
   test("Add todo form hides when add todo button is clicked again", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const addTodoButton = screen.getByText("Add Todo");
     fireEvent.click(addTodoButton);
     expect(screen.getByText("Add +")).toBeInTheDocument();
@@ -47,7 +75,7 @@ describe("TodoList Component", () => {
   });
 
   test("Adding a todo adds it to the list (using button)", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const addTodoButton = screen.getByText("Add Todo");
     fireEvent.click(addTodoButton);
     const input = screen.getByPlaceholderText("Add a todo");
@@ -58,7 +86,7 @@ describe("TodoList Component", () => {
   });
 
   test("Adding a todo adds it to the list (using enter key)", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const addTodoButton = screen.getByText("Add Todo");
     fireEvent.click(addTodoButton);
     const input = screen.getByPlaceholderText("Add a todo");
@@ -68,7 +96,7 @@ describe("TodoList Component", () => {
   });
 
   test("Adding a todo with an empty value shows an error message (using button)", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const addTodoButton = screen.getByText("Add Todo");
     fireEvent.click(addTodoButton);
     const input = screen.getByPlaceholderText("Add a todo");
@@ -79,7 +107,7 @@ describe("TodoList Component", () => {
   });
 
   test("Adding a todo with an empty value shows an error message (using enter key)", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const addTodoButton = screen.getByText("Add Todo");
     fireEvent.click(addTodoButton);
     const input = screen.getByPlaceholderText("Add a todo");
@@ -90,7 +118,7 @@ describe("TodoList Component", () => {
 
   //--------------------------- Filter form tests --------------------------- //
   test("Filter form shows all todos when all is selected", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const filterValue = screen.getByRole("combobox");
     fireEvent.change(filterValue, { target: { value: "all" } });
     expect(screen.getByText("Learn React")).toBeInTheDocument();
@@ -99,7 +127,7 @@ describe("TodoList Component", () => {
   });
 
   test("Filter form shows completed todos when completed is selected", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const filterValue = screen.getByRole("combobox");
     fireEvent.change(filterValue, { target: { value: "completed" } });
     expect(screen.getByText("Build Todo App")).toBeInTheDocument();
@@ -108,7 +136,7 @@ describe("TodoList Component", () => {
   });
 
   test("Filter form shows incomplete todos when incomplete is selected", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const filterValue = screen.getByRole("combobox");
     fireEvent.change(filterValue, { target: { value: "incomplete" } });
     expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
@@ -117,7 +145,7 @@ describe("TodoList Component", () => {
   });
 
   test("Filter form shows no todos when no todos are found", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     // Reopen the Build Todo App todo so we can filter to show completed todos
     const buildTodoApp = screen.getByText("Build Todo App");
     const checkbox = buildTodoApp.parentElement.querySelector(
@@ -133,7 +161,7 @@ describe("TodoList Component", () => {
   });
 
   test("Filter shows correct todos after filtering multiple times", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     // We start with all todos showing so check if this is the case
     expect(screen.getByText("Learn React")).toBeInTheDocument();
     expect(screen.getByText("Build Todo App")).toBeInTheDocument();
@@ -161,7 +189,7 @@ describe("TodoList Component", () => {
 
   //--------------------------- Search form tests --------------------------- //
   test("Search form shows correct todos when searching", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const searchValue = screen.getByRole("textbox");
     fireEvent.change(searchValue, { target: { value: "Lea" } });
     expect(screen.getByText("Learn React")).toBeInTheDocument();
@@ -170,7 +198,7 @@ describe("TodoList Component", () => {
   });
 
   test("Search form shows no todos when no todos are found", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const searchValue = screen.getByRole("textbox");
     fireEvent.change(searchValue, { target: { value: "nonsense" } });
     expect(screen.queryByText("Learn React")).not.toBeInTheDocument();
@@ -181,7 +209,7 @@ describe("TodoList Component", () => {
 
   //--------------------------- Todo delete item tests --------------------------- //
   test("Todo item deletes when delete button is clicked", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const deleteButton = todoItem.parentElement.querySelector(
       "button[class='delete-btn']",
@@ -192,7 +220,7 @@ describe("TodoList Component", () => {
 
   //--------------------------- Todo toggle item tests --------------------------- //
   test("Todo item toggles when checkbox is clicked", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React").closest("li");
     const checkbox = todoItem.parentElement.querySelector(
       "input[class='todo-checkbox']",
@@ -202,7 +230,7 @@ describe("TodoList Component", () => {
   });
 
   test("Todo item toggles on and off when checkbox is clicked", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React").closest("li");
     const checkbox = todoItem.parentElement.querySelector(
       "input[class='todo-checkbox']",
@@ -215,7 +243,7 @@ describe("TodoList Component", () => {
 
   //--------------------------- Todo edit item tests --------------------------- //
   test("Todo item shows edit form when edit button is clicked", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
@@ -225,7 +253,7 @@ describe("TodoList Component", () => {
   });
 
   test("Todo item can be edited using the edit form (using button)", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
@@ -240,7 +268,7 @@ describe("TodoList Component", () => {
   });
 
   test("Todo item can be edited using the edit form (using enter key)", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
@@ -254,7 +282,7 @@ describe("TodoList Component", () => {
   });
 
   test("Check if edit form dissappears when edit button is clicked again", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
@@ -266,7 +294,7 @@ describe("TodoList Component", () => {
   });
 
   test("Check if edit form dissappears when todo is edited", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
@@ -282,7 +310,7 @@ describe("TodoList Component", () => {
   });
 
   test("Check if edit form dissappears when todo is edited using enter key", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
@@ -297,7 +325,7 @@ describe("TodoList Component", () => {
   });
 
   test("Check if edit form shows error message when todo is edited with an empty value", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
@@ -312,7 +340,7 @@ describe("TodoList Component", () => {
   });
 
   test("Check if edit form shows error message when todo is edited with an empty value using enter key", () => {
-    render(<TodoList title="Todo List" />);
+    render(<TodoList title="Todo List"  standardTodos={standardTodos} />);
     const todoItem = screen.getByText("Learn React");
     const editButton = todoItem.parentElement.querySelector(
       "button[class='edit-btn']",
