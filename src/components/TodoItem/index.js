@@ -2,22 +2,26 @@ import React, { useState } from "react";
 import "./TodoItem.css";
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
+  // States for editing a todo
   const [isEditing, setIsEditing] = useState(false);
   const [invalidEdit, setInvalidEdit] = useState(false);
+  // State for the edited text
   const [editedText, setEditedText] = useState(todo.text);
 
+  // Function to edit a todo
   const handleEdit = () => {
-    console.log("Setting isEditing to true");
     setIsEditing(true);
     setInvalidEdit(false);
   };
 
+  // Function to save the edited todo
   const handleSave = () => {
+    // If the edited text is empty, set the invalid edit state to true
     if (editedText.trim() === "") {
       setInvalidEdit(true);
-      return;
+      return; // Return to prevent the function from continuing
     } else {
-      console.log("Setting isEditing to false");
+      // If the edited text is not empty, set the invalid edit state to false and edit the todo
       setInvalidEdit(false);
       setIsEditing(false);
       editTodo(todo.id, editedText);
@@ -25,6 +29,7 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
   };
 
   return (
+    // If the todo is completed, add the completed class to the todo item
     <li className={`todo-item ${todo.completed ? "completed" : ""}`}>
       <div className="todo-item-container-wrapper">
         <div className="todo-item-container">
@@ -44,10 +49,13 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
             </button>
           </div>
         </div>
+        {/* Reason for not using a form is because the form would submit and refresh the page which makes the edit form dissapear */}
         <div className="edit-form-container">
+          {/* If the edited text is empty, show a message */}
           <div className="edit-form-error-container">
             {invalidEdit && <p id="invalid-edit-text">Todo is required</p>}
           </div>
+          {/* If the todo is being edited, show the edit form */}
           {isEditing && (
             <div
               className="edit-form"
@@ -65,6 +73,7 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
                   }
                 }}
               />
+              {/* If the edited text is not empty, show the save button */}
               <button onClick={handleSave}>Save</button>
             </div>
           )}

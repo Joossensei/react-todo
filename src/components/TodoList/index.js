@@ -4,16 +4,20 @@ import TodoItem from "../TodoItem";
 
 // Create the TodoList component
 const TodoList = (props) => {
+  // States for the todos
   const [todos, setTodos] = useState([
     { id: 1, text: "Learn React", completed: false },
     { id: 2, text: "Build Todo App", completed: true },
     { id: 3, text: "Write Tests", completed: false },
   ]);
+  // States for adding a todo
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [newTodo, setNewTodo] = useState("");
+  // States for filtering the todos
   const [isFiltering, setIsFiltering] = useState(false);
   const [filter, setFilter] = useState("all");
-  const [filteredTodos, setFilteredTodos] = useState([]);
+  const [filteredTodos, setFilteredTodos] = useState([]); // Array to store the filtered todos
+  // States for searching for a todo
   const [search, setSearch] = useState("");
   const [invalidAdd, setInvalidAdd] = useState(false);
 
@@ -34,17 +38,20 @@ const TodoList = (props) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
+  // Function to edit a todo (used in TodoItem component)
   const handleEditTodo = (id, text) => {
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, text } : todo)));
   };
 
+  // Function to add a todo
   const handleAddTodo = () => {
+    // If the todo is empty, set the invalid add state to true
     if (newTodo.trim() === "") {
       setInvalidAdd(true);
       return;
-    } else {
-      setInvalidAdd(false);
     }
+    // If the todo is not empty, set the invalid add state to false
+    setInvalidAdd(false);
     setIsAddingTodo(false);
     setTodos([
       ...todos,
@@ -57,29 +64,40 @@ const TodoList = (props) => {
     setNewTodo("");
   };
 
+  // Function to filter the todos by completed status
   const handleChangeFilter = (e) => {
     setFilter(e.target.value);
     setIsFiltering(true);
+    // If the filter value is completed, filter the todos by completed status
     if (e.target.value === "completed") {
       setFilteredTodos(todos.filter((todo) => todo.completed));
-    } else if (e.target.value === "incomplete") {
+    }
+    // If the filter value is incomplete, filter the todos by incomplete status
+    else if (e.target.value === "incomplete") {
       setFilteredTodos(todos.filter((todo) => !todo.completed));
-    } else {
+    }
+    // If the filter value is all, show all todos
+    else {
       setTodos(todos);
       setFilteredTodos([]);
       setIsFiltering(false);
     }
   };
 
+  // Function to search for a todo
   const handleSearch = (e) => {
+    // Set the search value to the input value
     setSearch(e.target.value);
 
+    // If the search value is empty, show all todos
     if (e.target.value === "") {
       setTodos(todos);
       setFilteredTodos([]);
       setIsFiltering(false);
     } else {
+      // If the search value is not empty, filter the todos
       setIsFiltering(true);
+      // Filter the todos by the lowercase version of the search value so it's case insensitive
       setFilteredTodos(
         todos.filter((todo) =>
           todo.text.toLowerCase().includes(e.target.value.toLowerCase()),
@@ -144,6 +162,7 @@ const TodoList = (props) => {
       <ul className="todo-list">
         {/* Map through the todoList array and render a TodoItem component for each todo */}
         {/* Key prop is used to help React keep track of which items have changed */}
+        {/* Check if there are filtered todos or todos and if there are none to show, show a message */}
         {todos.length === 0 && filteredTodos.length === 0 && (
           <p>No todos to show</p>
         )}
@@ -169,6 +188,7 @@ const TodoList = (props) => {
               editTodo={handleEditTodo}
             />
           ))}
+        {/* If there are no filtered todos and the filter is active, show a message */}
         {filteredTodos.length === 0 && isFiltering && <p>No todos found</p>}
       </ul>
     </div>
