@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./TodoItem.css";
 import { validateTodo } from "../../utils/todoUtils";
+import { getPriorityByValue } from "../../utils/priorityUtils";
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
   // States for editing a todo
@@ -78,6 +79,19 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
               <button onClick={handleSave}>Save</button>
             </div>
           )}
+        </div>
+        <div
+          className="todo-item-priority"
+          style={{
+            backgroundColor: getPriorityByValue(todo.priority).bgColor,
+          }}
+        >
+          <div className="todo-item-priority-icon">
+            {getPriorityByValue(todo.priority).icon}
+          </div>
+          <span className="todo-item-priority-label">
+            {getPriorityByValue(todo.priority).label}
+          </span>
         </div>
       </div>
     </li>

@@ -8,8 +8,6 @@
 .todo-item-container-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
   width: 100%;
 }
 
@@ -145,6 +143,32 @@
   background-color: #f8d7da;
   padding: 5px;
   border-radius: 5px;
+}
+
+.todo-item-priority {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  border-radius: 5px;
+  width: 20%;
+  gap: 5px;
+}
+
+.todo-item-priority-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.todo-item-priority-label {
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 /* Responsive design */

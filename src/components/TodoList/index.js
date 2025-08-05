@@ -1,30 +1,61 @@
 import React, { useState } from "react";
 import "./TodoList.css";
 import TodoItem from "../TodoItem";
+import AddTodo from "../AddTodo";
+import {
+  getPriorityOrder,
+  getPriorityByValue,
+} from "../../utils/priorityUtils";
+
 import {
   generateTodoId,
   formatTodoText,
   validateTodo,
 } from "../../utils/todoUtils";
+import { PRIORITY } from "../../constants";
 
 // Create the TodoList component
 const TodoList = (props) => {
   // States for the todos
   const [todos, setTodos] = useState([
-    { id: 1, text: "Learn React", completed: false },
-    { id: 2, text: "Build Todo App", completed: true },
-    { id: 3, text: "Write Tests", completed: false },
+    {
+      id: 1,
+      text: "Learn React",
+      completed: false,
+      priority: PRIORITY.LOW.value,
+    },
+    {
+      id: 2,
+      text: "Build Todo App",
+      completed: true,
+      priority: PRIORITY.MEDIUM.value,
+    },
+    {
+      id: 3,
+      text: "Write Tests",
+      completed: false,
+      priority: PRIORITY.HIGH.value,
+    },
+    {
+      id: 4,
+      text: "Learn React Testing",
+      completed: false,
+      priority: PRIORITY.URGENT.value,
+    },
   ]);
   // States for adding a todo
   const [isAddingTodo, setIsAddingTodo] = useState(false);
-  const [newTodo, setNewTodo] = useState("");
+  const [newTodo, setNewTodo] = useState({
+    text: "",
+    priority: "",
+  });
   // States for filtering the todos
   const [isFiltering, setIsFiltering] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [filterPriority, setFilterPriority] = useState("");
   const [filteredTodos, setFilteredTodos] = useState([]); // Array to store the filtered todos
   // States for searching for a todo
   const [search, setSearch] = useState("");
-  const [invalidAdd, setInvalidAdd] = useState(false);
 
   // Function to toggle the completed status of a todo
   const toggleTodo = (id) => {
@@ -50,23 +81,17 @@ const TodoList = (props) => {
 
   // Function to add a todo
   const handleAddTodo = () => {
-    // If the todo is empty, set the invalid add state to true
-    if (!validateTodo(newTodo)) {
-      setInvalidAdd(true);
-      return;
-    }
-    // If the todo is not empty, set the invalid add state to false
-    setInvalidAdd(false);
     setIsAddingTodo(false);
     setTodos([
       ...todos,
       {
         id: generateTodoId(todos),
-        text: formatTodoText(newTodo),
+        text: formatTodoText(newTodo.text),
         completed: false,
+        priority: newTodo.priority,
       },
     ]);
-    setNewTodo("");
+    setNewTodo({ text: "", priority: "" });
   };
 
   // Function to filter the todos by completed status
@@ -111,6 +136,27 @@ const TodoList = (props) => {
     }
   };
 
+  // Function to filter the todos by priority
+  const handleChangeFilterPriority = (e) => {
+    setFilterPriority(e.target.value);
+    setIsFiltering(true);
+    // Filter the todos by the priority value
+    setFilteredTodos(todos.filter((todo) => todo.priority === e.target.value));
+    // If the filter value is empty, show all todos
+    if (e.target.value === "") {
+      setTodos(todos);
+      setFilteredTodos([]);
+      setIsFiltering(false);
+    }
+    // If the filter value is not empty, filter the todos by the priority value
+    else {
+      setFilteredTodos(
+        todos.filter((todo) => todo.priority === e.target.value),
+      );
+      setIsFiltering(true);
+    }
+  };
+
   return (
     <div className="todo-list-container">
       <h1>{props.title}</h1>
@@ -135,40 +181,28 @@ const TodoList = (props) => {
           <option value="completed">Completed</option>
           <option value="incomplete">Incomplete</option>
         </select>
-        {/* Add todo button */}
-        <button
-          className="add-todo-btn"
-          onClick={() => setIsAddingTodo(!isAddingTodo)}
+        {/* Filter by priority */}
+        <select
+          id="filterTodos"
+          className="filter-select"
+          value={filterPriority}
+          onChange={handleChangeFilterPriority}
         >
-          Add Todo
-        </button>
+          <option value="">Filter by priority</option>
+          {getPriorityOrder().map((priority) => (
+            <option key={priority} value={priority}>
+              {getPriorityByValue(priority).label}
+            </option>
+          ))}
+        </select>
       </div>
-      <div className="add-todo-input-container">
-        <div className="add-todo-form-error-container">
-          {invalidAdd && <p id="invalid-add-text">Todo is required</p>}
-        </div>
-        {/* If the add button is clicked, show the input field to add a todo */}
-        {isAddingTodo && (
-          <div className="add-todo-form">
-            <input
-              className="add-todo-input"
-              type="text"
-              placeholder="Add a todo"
-              value={newTodo}
-              onChange={(e) => setNewTodo(e.target.value)}
-              onSubmit={handleAddTodo}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleAddTodo();
-                }
-              }}
-            ></input>
-            <button className="add-todo-form-btn" onClick={handleAddTodo}>
-              Add +
-            </button>
-          </div>
-        )}
-      </div>
+      <AddTodo
+        onAddTodo={handleAddTodo}
+        isAddingTodo={isAddingTodo}
+        setIsAddingTodo={setIsAddingTodo}
+        newTodo={newTodo}
+        setNewTodo={setNewTodo}
+      />
       <ul className="todo-list">
         {/* Map through the todoList array and render a TodoItem component for each todo */}
         {/* Key prop is used to help React keep track of which items have changed */}

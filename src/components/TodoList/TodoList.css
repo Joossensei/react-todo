@@ -11,8 +11,7 @@
 }
 
 .search-bar,
-.filter-select,
-.add-todo-btn {
+.filter-select {
   box-sizing: border-box;
 }
 
@@ -29,78 +28,10 @@
   border-radius: 4px;
 }
 
-.add-todo-btn {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  color: white;
-  background-color: #007bff;
-  cursor: pointer;
-}
-
-.add-todo-input-container {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  width: 100%;
-}
-
-.add-todo-form {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  margin: 10px;
-}
-
-.add-todo-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
-  margin-left: 20px;
-}
-
-.add-todo-form-btn {
-  box-sizing: border-box;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 0 4px 4px 0;
-  color: white;
-  background-color: #007bff;
-  cursor: pointer;
-  width: 15%;
-}
-
-.add-todo-form-error-container {
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  width: 100%;
-  color: red;
-  font-size: 12px;
-  margin-top: 10px;
-  margin-right: 10px;
-}
-
-#invalid-add-text {
-  color: red;
-  font-size: 12px;
-  background-color: #f8d7da;
-  padding: 5px;
-  border-radius: 5px;
-}
-
 @media (max-width: 630px) {
   .todo-list-header {
     flex-direction: column;
     align-items: flex-start;
-  }
-  .add-todo-input-container {
-    width: 100%;
   }
 
   .search-bar {
@@ -109,38 +40,5 @@
 
   .filter-select {
     width: 100%;
-  }
-
-  .add-todo-btn {
-    width: 100%;
-  }
-}
-
-@media (max-width: 490px) {
-  /* Change the add todo form button to underneath the input field */
-  .add-todo-form-btn {
-    width: 100%;
-    border-radius: 4px;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    margin-top: 10px;
-  }
-
-  .add-todo-form {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .add-todo-input {
-    width: 95%;
-    border-radius: 4px;
-  }
-
-  .add-todo-form-btn {
-    margin-left: 20px;
-    margin-right: 20px;
-    width: 95%;
-    border-radius: 4px;
   }
 }
