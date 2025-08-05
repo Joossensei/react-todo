@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import "./TodoList.css";
 import TodoItem from "../TodoItem";
+import {
+  generateTodoId,
+  formatTodoText,
+  validateTodo,
+} from "../../utils/todoUtils";
 
 // Create the TodoList component
 const TodoList = (props) => {
@@ -46,7 +51,7 @@ const TodoList = (props) => {
   // Function to add a todo
   const handleAddTodo = () => {
     // If the todo is empty, set the invalid add state to true
-    if (newTodo.trim() === "") {
+    if (!validateTodo(newTodo)) {
       setInvalidAdd(true);
       return;
     }
@@ -56,8 +61,8 @@ const TodoList = (props) => {
     setTodos([
       ...todos,
       {
-        id: todos.length + 1,
-        text: newTodo,
+        id: generateTodoId(todos),
+        text: formatTodoText(newTodo),
         completed: false,
       },
     ]);
@@ -152,6 +157,11 @@ const TodoList = (props) => {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onSubmit={handleAddTodo}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleAddTodo();
+                }
+              }}
             ></input>
             <button className="add-todo-form-btn" onClick={handleAddTodo}>
               Add +

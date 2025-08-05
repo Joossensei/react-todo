@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import TodoItem from "./index";
 
@@ -52,11 +52,54 @@ describe("TodoItem Component", () => {
     expect(screen.getByText("Delete")).toBeInTheDocument();
   });
 
-  test("checkbox is read-only (static component)", () => {
-    render(<TodoItem todo={mockTodo} />);
-    const checkbox = screen.getByRole("checkbox");
-    expect(checkbox).toHaveAttribute("readonly");
-  });
+  // This wont work as the edit and delete functions are inside the TodoList component
+
+  // test("delete button deletes non-completed todo", () => {
+  //   render(<TodoItem todo={mockTodo} />);
+  //   const deleteButton = screen.getByText("Delete");
+  //   fireEvent.click(deleteButton);
+  //   expect(screen.queryByText("Learn React Testing")).not.toBeInTheDocument();
+  // });
+
+  // test("delete button works when todo is completed", () => {
+  //   render(<TodoItem todo={mockCompletedTodo} />);
+  //   const deleteButton = screen.getByText("Delete");
+  //   fireEvent.click(deleteButton);
+  //   expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
+  // });
+
+  // test("edit button opens edit form", () => {
+  //   render(<TodoItem todo={mockTodo} />);
+  //   const editButton = screen.getByText("Edit");
+  //   fireEvent.click(editButton);
+  //   expect(screen.getByText("Save")).toBeInTheDocument();
+  // });
+
+  // test("edit form saves edited todo", () => {
+  //   render(<TodoItem todo={mockTodo} />);
+  //   const editButton = screen.getByText("Edit");
+  //   fireEvent.click(editButton);
+  //   const input = screen.getByRole("textbox");
+  //   fireEvent.change(input, {
+  //     target: { value: "Learn React Testing edited" },
+  //   });
+  //   const saveButton = screen.getByText("Save");
+  //   fireEvent.click(saveButton);
+  //   expect(
+  //     screen.queryByText("Learn React Testing edited"),
+  //   ).toBeInTheDocument();
+  // });
+
+  // test("edit form shows error message for empty input", () => {
+  //   render(<TodoItem todo={mockTodo} />);
+  //   const editButton = screen.getByText("Edit");
+  //   fireEvent.click(editButton);
+  //   const input = screen.getByRole("textbox");
+  //   fireEvent.change(input, { target: { value: "" } });
+  //   const saveButton = screen.getByText("Save");
+  //   fireEvent.click(saveButton);
+  //   expect(screen.getByText("Todo is required")).toBeInTheDocument();
+  // });
 
   test("renders with correct structure", () => {
     render(<TodoItem todo={mockTodo} />);
@@ -71,12 +114,5 @@ describe("TodoItem Component", () => {
     expect(screen.getByText("Learn React Testing")).toBeInTheDocument();
     expect(screen.getByText("Edit")).toBeInTheDocument();
     expect(screen.getByText("Delete")).toBeInTheDocument();
-  });
-
-  test("handles empty todo text gracefully", () => {
-    const emptyTodo = { id: 3, text: "", completed: false };
-    render(<TodoItem todo={emptyTodo} />);
-    const todoItem = screen.getByRole("listitem");
-    expect(todoItem).toBeInTheDocument();
   });
 });

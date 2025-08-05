@@ -1,1 +1,327 @@
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import TodoList from "./index";
 
+describe("TodoList Component", () => {
+  test("renders todo list correctly", () => {
+    render(<TodoList title="Todo List" />);
+    expect(screen.getByText("Todo List")).toBeInTheDocument();
+  });
+
+  test("renders todos correctly", () => {
+    render(<TodoList title="Todo List" />);
+    expect(screen.getByText("Learn React")).toBeInTheDocument();
+  });
+
+  test("renders add todo form correctly", () => {
+    render(<TodoList title="Todo List" />);
+    expect(screen.getByText("Add Todo")).toBeInTheDocument();
+  });
+
+  test("renders filter form correctly", () => {
+    render(<TodoList title="Todo List" />);
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
+  });
+
+  test("renders search form correctly", () => {
+    render(<TodoList title="Todo List" />);
+    expect(screen.getByPlaceholderText("Search todos")).toBeInTheDocument();
+  });
+
+  //--------------------------- Add todo form tests --------------------------- //
+  test("renders add todo form correctly", () => {
+    render(<TodoList title="Todo List" />);
+    const addTodoButton = screen.getByText("Add Todo");
+    fireEvent.click(addTodoButton);
+    expect(screen.getByText("Add +")).toBeInTheDocument();
+  });
+
+  test("Add todo form hides when add todo button is clicked again", () => {
+    render(<TodoList title="Todo List" />);
+    const addTodoButton = screen.getByText("Add Todo");
+    fireEvent.click(addTodoButton);
+    expect(screen.getByText("Add +")).toBeInTheDocument();
+    fireEvent.click(addTodoButton);
+    expect(screen.queryByText("Add +")).not.toBeInTheDocument();
+  });
+
+  test("Adding a todo adds it to the list (using button)", () => {
+    render(<TodoList title="Todo List" />);
+    const addTodoButton = screen.getByText("Add Todo");
+    fireEvent.click(addTodoButton);
+    const input = screen.getByPlaceholderText("Add a todo");
+    fireEvent.change(input, { target: { value: "Very new value" } });
+    const saveButton = screen.getByText("Add +");
+    fireEvent.click(saveButton);
+    expect(screen.getByText("Very new value")).toBeInTheDocument();
+  });
+
+  test("Adding a todo adds it to the list (using enter key)", () => {
+    render(<TodoList title="Todo List" />);
+    const addTodoButton = screen.getByText("Add Todo");
+    fireEvent.click(addTodoButton);
+    const input = screen.getByPlaceholderText("Add a todo");
+    fireEvent.change(input, { target: { value: "Very new value" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(screen.getByText("Very new value")).toBeInTheDocument();
+  });
+
+  test("Adding a todo with an empty value shows an error message (using button)", () => {
+    render(<TodoList title="Todo List" />);
+    const addTodoButton = screen.getByText("Add Todo");
+    fireEvent.click(addTodoButton);
+    const input = screen.getByPlaceholderText("Add a todo");
+    fireEvent.change(input, { target: { value: "" } });
+    const saveButton = screen.getByText("Add +");
+    fireEvent.click(saveButton);
+    expect(screen.getByText("Todo is required")).toBeInTheDocument();
+  });
+
+  test("Adding a todo with an empty value shows an error message (using enter key)", () => {
+    render(<TodoList title="Todo List" />);
+    const addTodoButton = screen.getByText("Add Todo");
+    fireEvent.click(addTodoButton);
+    const input = screen.getByPlaceholderText("Add a todo");
+    fireEvent.change(input, { target: { value: "" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(screen.getByText("Todo is required")).toBeInTheDocument();
+  });
+
+  //--------------------------- Filter form tests --------------------------- //
+  test("Filter form shows all todos when all is selected", () => {
+    render(<TodoList title="Todo List" />);
+    const filterValue = screen.getByRole("combobox");
+    fireEvent.change(filterValue, { target: { value: "all" } });
+    expect(screen.getByText("Learn React")).toBeInTheDocument();
+    expect(screen.getByText("Build Todo App")).toBeInTheDocument();
+    expect(screen.getByText("Write Tests")).toBeInTheDocument();
+  });
+
+  test("Filter form shows completed todos when completed is selected", () => {
+    render(<TodoList title="Todo List" />);
+    const filterValue = screen.getByRole("combobox");
+    fireEvent.change(filterValue, { target: { value: "completed" } });
+    expect(screen.getByText("Build Todo App")).toBeInTheDocument();
+    expect(screen.queryByText("Learn React")).not.toBeInTheDocument();
+    expect(screen.queryByText("Write Tests")).not.toBeInTheDocument();
+  });
+
+  test("Filter form shows incomplete todos when incomplete is selected", () => {
+    render(<TodoList title="Todo List" />);
+    const filterValue = screen.getByRole("combobox");
+    fireEvent.change(filterValue, { target: { value: "incomplete" } });
+    expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
+    expect(screen.getByText("Learn React")).toBeInTheDocument();
+    expect(screen.getByText("Write Tests")).toBeInTheDocument();
+  });
+
+  test("Filter form shows no todos when no todos are found", () => {
+    render(<TodoList title="Todo List" />);
+    // Reopen the Build Todo App todo so we can filter to show completed todos
+    const buildTodoApp = screen.getByText("Build Todo App");
+    const checkbox = buildTodoApp.parentElement.querySelector(
+      "input[class='todo-checkbox']",
+    );
+    fireEvent.click(checkbox);
+    const filterValue = screen.getByRole("combobox");
+    fireEvent.change(filterValue, { target: { value: "completed" } });
+    expect(screen.queryByText("Learn React")).not.toBeInTheDocument();
+    expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
+    expect(screen.queryByText("Write Tests")).not.toBeInTheDocument();
+    expect(screen.getByText("No todos found")).toBeInTheDocument();
+  });
+
+  test("Filter shows correct todos after filtering multiple times", () => {
+    render(<TodoList title="Todo List" />);
+    // We start with all todos showing so check if this is the case
+    expect(screen.getByText("Learn React")).toBeInTheDocument();
+    expect(screen.getByText("Build Todo App")).toBeInTheDocument();
+    expect(screen.getByText("Write Tests")).toBeInTheDocument();
+    const filterValue = screen.getByRole("combobox");
+
+    // Filter to show only completed todos
+    fireEvent.change(filterValue, { target: { value: "completed" } });
+    expect(screen.queryByText("Learn React")).not.toBeInTheDocument();
+    expect(screen.queryByText("Build Todo App")).toBeInTheDocument();
+    expect(screen.queryByText("Write Tests")).not.toBeInTheDocument();
+
+    // Filter to show only incomplete todos
+    fireEvent.change(filterValue, { target: { value: "incomplete" } });
+    expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
+    expect(screen.getByText("Learn React")).toBeInTheDocument();
+    expect(screen.getByText("Write Tests")).toBeInTheDocument();
+
+    // Filter to show all todos
+    fireEvent.change(filterValue, { target: { value: "all" } });
+    expect(screen.getByText("Learn React")).toBeInTheDocument();
+    expect(screen.getByText("Build Todo App")).toBeInTheDocument();
+    expect(screen.getByText("Write Tests")).toBeInTheDocument();
+  });
+
+  //--------------------------- Search form tests --------------------------- //
+  test("Search form shows correct todos when searching", () => {
+    render(<TodoList title="Todo List" />);
+    const searchValue = screen.getByRole("textbox");
+    fireEvent.change(searchValue, { target: { value: "Lea" } });
+    expect(screen.getByText("Learn React")).toBeInTheDocument();
+    expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
+    expect(screen.queryByText("Write Tests")).not.toBeInTheDocument();
+  });
+
+  test("Search form shows no todos when no todos are found", () => {
+    render(<TodoList title="Todo List" />);
+    const searchValue = screen.getByRole("textbox");
+    fireEvent.change(searchValue, { target: { value: "nonsense" } });
+    expect(screen.queryByText("Learn React")).not.toBeInTheDocument();
+    expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
+    expect(screen.queryByText("Write Tests")).not.toBeInTheDocument();
+    expect(screen.getByText("No todos found")).toBeInTheDocument();
+  });
+
+  //--------------------------- Todo delete item tests --------------------------- //
+  test("Todo item deletes when delete button is clicked", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const deleteButton = todoItem.parentElement.querySelector(
+      "button[class='delete-btn']",
+    );
+    fireEvent.click(deleteButton);
+    expect(screen.queryByText("Learn React")).not.toBeInTheDocument();
+  });
+
+  //--------------------------- Todo toggle item tests --------------------------- //
+  test("Todo item toggles when checkbox is clicked", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React").closest("li");
+    const checkbox = todoItem.parentElement.querySelector(
+      "input[class='todo-checkbox']",
+    );
+    fireEvent.click(checkbox);
+    expect(todoItem).toHaveClass("completed");
+  });
+
+  test("Todo item toggles on and off when checkbox is clicked", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React").closest("li");
+    const checkbox = todoItem.parentElement.querySelector(
+      "input[class='todo-checkbox']",
+    );
+    fireEvent.click(checkbox);
+    expect(todoItem).toHaveClass("completed");
+    fireEvent.click(checkbox);
+    expect(todoItem).not.toHaveClass("completed");
+  });
+
+  //--------------------------- Todo edit item tests --------------------------- //
+  test("Todo item shows edit form when edit button is clicked", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    expect(screen.getByText("Save")).toBeInTheDocument();
+  });
+
+  test("Todo item can be edited using the edit form (using button)", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    const editFields = screen.getAllByRole("textbox");
+    const editField = editFields.find((input) => input.value === "Learn React");
+    fireEvent.change(editField, { target: { value: "Learn React edited" } });
+    const saveButton = screen.getByText("Save");
+    fireEvent.click(saveButton);
+    expect(screen.getByText("Learn React edited")).toBeInTheDocument();
+  });
+
+  test("Todo item can be edited using the edit form (using enter key)", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    const editFields = screen.getAllByRole("textbox");
+    const editField = editFields.find((input) => input.value === "Learn React");
+    fireEvent.change(editField, { target: { value: "Learn React edited" } });
+    fireEvent.keyDown(editField, { key: "Enter", code: "Enter" });
+    expect(screen.getByText("Learn React edited")).toBeInTheDocument();
+  });
+
+  test("Check if edit form dissappears when edit button is clicked again", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    expect(screen.getByText("Save")).toBeInTheDocument();
+    fireEvent.click(editButton);
+    expect(screen.queryByText("Save")).not.toBeInTheDocument();
+  });
+
+  test("Check if edit form dissappears when todo is edited", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    const editFields = screen.getAllByRole("textbox");
+    const editField = editFields.find((input) => input.value === "Learn React");
+    fireEvent.change(editField, { target: { value: "Learn React edited" } });
+    const saveButton = screen.getByText("Save");
+    fireEvent.click(saveButton);
+    expect(screen.getByText("Learn React edited")).toBeInTheDocument();
+    expect(screen.queryByText("Save")).not.toBeInTheDocument();
+  });
+
+  test("Check if edit form dissappears when todo is edited using enter key", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    const editFields = screen.getAllByRole("textbox");
+    const editField = editFields.find((input) => input.value === "Learn React");
+    fireEvent.change(editField, { target: { value: "Learn React edited" } });
+    fireEvent.keyDown(editField, { key: "Enter", code: "Enter" });
+    expect(screen.getByText("Learn React edited")).toBeInTheDocument();
+    expect(screen.queryByText("Save")).not.toBeInTheDocument();
+  });
+
+  test("Check if edit form shows error message when todo is edited with an empty value", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    const editFields = screen.getAllByRole("textbox");
+    const editField = editFields.find((input) => input.value === "Learn React");
+    fireEvent.change(editField, { target: { value: "" } });
+    const saveButton = screen.getByText("Save");
+    fireEvent.click(saveButton);
+    expect(screen.getByText("Todo is required")).toBeInTheDocument();
+  });
+
+  test("Check if edit form shows error message when todo is edited with an empty value using enter key", () => {
+    render(<TodoList title="Todo List" />);
+    const todoItem = screen.getByText("Learn React");
+    const editButton = todoItem.parentElement.querySelector(
+      "button[class='edit-btn']",
+    );
+    fireEvent.click(editButton);
+    const editFields = screen.getAllByRole("textbox");
+    const editField = editFields.find((input) => input.value === "Learn React");
+    fireEvent.change(editField, { target: { value: "" } });
+    fireEvent.keyDown(editField, { key: "Enter", code: "Enter" });
+    expect(screen.getByText("Todo is required")).toBeInTheDocument();
+  });
+});

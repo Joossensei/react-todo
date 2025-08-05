@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./TodoItem.css";
+import { validateTodo } from "../../utils/todoUtils";
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
   // States for editing a todo
@@ -10,14 +11,14 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
 
   // Function to edit a todo
   const handleEdit = () => {
-    setIsEditing(true);
+    setIsEditing(!isEditing);
     setInvalidEdit(false);
   };
 
   // Function to save the edited todo
   const handleSave = () => {
     // If the edited text is empty, set the invalid edit state to true
-    if (editedText.trim() === "") {
+    if (!validateTodo(editedText)) {
       setInvalidEdit(true);
       return; // Return to prevent the function from continuing
     } else {
@@ -63,9 +64,9 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
             >
               <input
                 type="text"
+                placeholder="Edit todo"
                 value={editedText}
                 onChange={(e) => setEditedText(e.target.value)}
-                onBlur={() => setInvalidEdit(false)}
                 onClick={() => setInvalidEdit(false)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
