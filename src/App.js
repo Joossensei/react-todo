@@ -38,7 +38,7 @@ function App() {
           Todo app where you can add, edit, complete, delete and filter todos
         </p>
 
-        <TodoList title="Personal Tasks" standardTodos={[]} />
+        <TodoList title="Personal Tasks" standardTodos={standardTodos} />
 
         <footer>
           <p>
