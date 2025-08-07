@@ -22,35 +22,35 @@ const mock = jest.genMockFromModule("../../utils/priorityUtils");
 mock.getPriorityByValue = jest.fn((value) => {
   const mockPriorities = {
     low: {
-      value: "low",
-      label: "Low",
+      key: "low",
+      name: "Low",
       color: "#6b7280",
       icon: "↓",
       bgColor: "#f3f4f6",
     },
     medium: {
-      value: "medium",
-      label: "Medium",
+      key: "medium",
+      name: "Medium",
       color: "#f59e0b",
       icon: "−",
       bgColor: "#fef3c7",
     },
     high: {
-      value: "high",
-      label: "High",
+      key: "high",
+      name: "High",
       color: "#ef4444",
       icon: "↑",
       bgColor: "#fee2e2",
     },
     urgent: {
-      value: "urgent",
-      label: "Urgent",
+      key: "urgent",
+      name: "Urgent",
       color: "#dc2626",
       icon: "⚠",
       bgColor: "#fecaca",
     },
   };
-  return mockPriorities[value] || { value: value, label: value };
+  return mockPriorities[key] || { key: key, name: name };
 });
 
 import { getPriorityByValue } from "../../utils/priorityUtils";
@@ -100,55 +100,6 @@ describe("TodoItem Component", () => {
     expect(screen.getByText("Edit")).toBeInTheDocument();
     expect(screen.getByText("Delete")).toBeInTheDocument();
   });
-
-  // This wont work as the edit and delete functions are inside the TodoList component
-
-  // test("delete button deletes non-completed todo", () => {
-  //   render(<TodoItem todo={mockTodo} />);
-  //   const deleteButton = screen.getByText("Delete");
-  //   fireEvent.click(deleteButton);
-  //   expect(screen.queryByText("Learn React Testing")).not.toBeInTheDocument();
-  // });
-
-  // test("delete button works when todo is completed", () => {
-  //   render(<TodoItem todo={mockCompletedTodo} />);
-  //   const deleteButton = screen.getByText("Delete");
-  //   fireEvent.click(deleteButton);
-  //   expect(screen.queryByText("Build Todo App")).not.toBeInTheDocument();
-  // });
-
-  // test("edit button opens edit form", () => {
-  //   render(<TodoItem todo={mockTodo} />);
-  //   const editButton = screen.getByText("Edit");
-  //   fireEvent.click(editButton);
-  //   expect(screen.getByText("Save")).toBeInTheDocument();
-  // });
-
-  // test("edit form saves edited todo", () => {
-  //   render(<TodoItem todo={mockTodo} />);
-  //   const editButton = screen.getByText("Edit");
-  //   fireEvent.click(editButton);
-  //   const input = screen.getByRole("textbox");
-  //   fireEvent.change(input, {
-  //     target: { value: "Learn React Testing edited" },
-  //   });
-  //   const saveButton = screen.getByText("Save");
-  //   fireEvent.click(saveButton);
-  //   expect(
-  //     screen.queryByText("Learn React Testing edited"),
-  //   ).toBeInTheDocument();
-  // });
-
-  // test("edit form shows error message for empty input", () => {
-  //   render(<TodoItem todo={mockTodo} />);
-  //   const editButton = screen.getByText("Edit");
-  //   fireEvent.click(editButton);
-  //   const input = screen.getByRole("textbox");
-  //   fireEvent.change(input, { target: { value: "" } });
-  //   const saveButton = screen.getByText("Save");
-  //   fireEvent.click(saveButton);
-  //   expect(screen.getByText("Todo is required")).toBeInTheDocument();
-  // });
 
   test("renders with correct structure", () => {
     render(<TodoItem todo={mockTodo} {...mockProps} />);

@@ -9,10 +9,6 @@ import {
   formatTodoText,
   validateTodo,
 } from "../../utils/todoUtils";
-import {
-  getPriorityByValue,
-  getPriorityOrder,
-} from "../../utils/priorityUtils";
 import { sortTodos, getSortOptions } from "../../utils/sortingUtils";
 // Icons
 import { FaSearch, FaFilter, FaFlag, FaSort, FaBars } from "react-icons/fa";
@@ -20,6 +16,7 @@ import { FaSearch, FaFilter, FaFlag, FaSort, FaBars } from "react-icons/fa";
 import AddTodo from "../AddTodo";
 // Hooks
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { usePriorities } from "../../hooks/usePriorities";
 
 // Create the TodoList component
 const TodoList = (props) => {
@@ -43,6 +40,12 @@ const TodoList = (props) => {
 
   // States for mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Add priorities hook here
+  const {
+    priorities,
+    loading: prioritiesLoading,
+    error: prioritiesError,
+  } = usePriorities();
 
   // Function to get processed todos (filtered and sorted)
   const getProcessedTodos = () => {
@@ -72,7 +75,7 @@ const TodoList = (props) => {
     }
 
     // Apply sorting
-    return sortTodos(processedTodos, sortBy);
+    return sortTodos(processedTodos, priorities, sortBy);
   };
 
   // Function to toggle the completed status of a todo
@@ -99,7 +102,7 @@ const TodoList = (props) => {
   };
 
   // Function to add a todo
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     if (!validateTodo(newTodo.text) || newTodo.priority === "") {
       return;
     }
@@ -123,173 +126,191 @@ const TodoList = (props) => {
 
   const processedTodos = getProcessedTodos();
 
+  if (prioritiesLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (prioritiesError) {
+    return <div>Error: {prioritiesError}</div>;
+  }
+
   return (
     <div className="todo-list-container">
       <h1>{props.title}</h1>
 
-      {/* Desktop Header */}
-      <div className="todo-list-header desktop-header">
-        {/* Row 1: Search */}
-        <div className="header-row search-row">
-          <div className="search-container">
-            <FaSearch className="search-icon" />
-            <input
-              id="searchTodos"
-              type="text"
-              placeholder="Search todos..."
-              className="search-input"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+      {priorities.length > 0 && (
+        <div>
+          {/* Desktop Header */}
+          <div className="todo-list-header desktop-header">
+            {/* Row 1: Search */}
+            <div className="header-row search-row">
+              <div className="search-container">
+                <FaSearch className="search-icon" />
+                <input
+                  id="searchTodos"
+                  type="text"
+                  placeholder="Search todos..."
+                  className="search-input"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Filters */}
+            <div className="header-row filter-row">
+              <div className="filter-container">
+                <FaFilter className="filter-icon" />
+                <select
+                  id="filterTodos"
+                  className="filter-select"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  <option value="all">All Status</option>
+                  <option value="completed">Completed</option>
+                  <option value="incomplete">Incomplete</option>
+                </select>
+              </div>
+
+              <div className="filter-container">
+                <FaFlag className="priority-icon" />
+                <select
+                  id="filterPriority"
+                  className="filter-select"
+                  value={filterPriority}
+                  onChange={(e) => setFilterPriority(e.target.value)}
+                  disabled={prioritiesLoading}
+                >
+                  <option value="">All Priorities</option>
+                  {priorities.map((priority) => (
+                    <option key={priority.key} value={priority.key}>
+                      {priority.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Row 3: Sort */}
+            <div className="header-row sort-row">
+              <div className="sort-container">
+                <FaSort className="sort-icon" />
+                <select
+                  id="sortTodos"
+                  className="sort-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  {getSortOptions().map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Header */}
+          <div className="todo-list-header mobile-header">
+            <div className="search-container">
+              <FaSearch className="search-icon" />
+              <input
+                id="searchTodosMobile"
+                type="text"
+                placeholder="Search todos..."
+                className="search-input"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="hamburger-menu" onClick={toggleMobileMenu}>
+              <FaBars />
+            </button>
+          </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="mobile-menu">
+              <div className="mobile-menu-section">
+                <h4>Filter by Status</h4>
+                <select
+                  className="mobile-filter-select"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  <option value="all">All Status</option>
+                  <option value="completed">Completed</option>
+                  <option value="incomplete">Incomplete</option>
+                </select>
+              </div>
+
+              <div className="mobile-menu-section">
+                <h4>Filter by Priority</h4>
+                <select
+                  className="mobile-filter-select"
+                  value={filterPriority}
+                  onChange={(e) => setFilterPriority(e.target.value)}
+                  disabled={prioritiesLoading}
+                >
+                  <option value="">All Priorities</option>
+                  {priorities.map((priority) => (
+                    <option key={priority.key} value={priority.key}>
+                      {priority.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mobile-menu-section">
+                <h4>Sort by</h4>
+                <select
+                  className="mobile-sort-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  {getSortOptions().map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+          <div>
+            {/* Add Todo Section */}
+            <AddTodo
+              onAddTodo={handleAddTodo}
+              isAddingTodo={isAddingTodo}
+              setIsAddingTodo={setIsAddingTodo}
+              newTodo={newTodo}
+              setNewTodo={setNewTodo}
+              priorities={priorities}
+              prioritiesLoading={prioritiesLoading}
             />
-          </div>
-        </div>
 
-        {/* Row 2: Filters */}
-        <div className="header-row filter-row">
-          <div className="filter-container">
-            <FaFilter className="filter-icon" />
-            <select
-              id="filterTodos"
-              className="filter-select"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="incomplete">Incomplete</option>
-            </select>
-          </div>
-
-          <div className="filter-container">
-            <FaFlag className="priority-icon" />
-            <select
-              id="filterPriority"
-              className="filter-select"
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-            >
-              <option value="">All Priorities</option>
-              {getPriorityOrder().map((priority) => (
-                <option key={priority} value={priority}>
-                  {getPriorityByValue(priority).label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Row 3: Sort */}
-        <div className="header-row sort-row">
-          <div className="sort-container">
-            <FaSort className="sort-icon" />
-            <select
-              id="sortTodos"
-              className="sort-select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              {getSortOptions().map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Header */}
-      <div className="todo-list-header mobile-header">
-        <div className="search-container">
-          <FaSearch className="search-icon" />
-          <input
-            id="searchTodosMobile"
-            type="text"
-            placeholder="Search todos..."
-            className="search-input"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <button className="hamburger-menu" onClick={toggleMobileMenu}>
-          <FaBars />
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="mobile-menu">
-          <div className="mobile-menu-section">
-            <h4>Filter by Status</h4>
-            <select
-              className="mobile-filter-select"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="incomplete">Incomplete</option>
-            </select>
-          </div>
-
-          <div className="mobile-menu-section">
-            <h4>Filter by Priority</h4>
-            <select
-              className="mobile-filter-select"
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-            >
-              <option value="">All Priorities</option>
-              {getPriorityOrder().map((priority) => (
-                <option key={priority} value={priority}>
-                  {getPriorityByValue(priority).label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mobile-menu-section">
-            <h4>Sort by</h4>
-            <select
-              className="mobile-sort-select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              {getSortOptions().map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            {/* Todo List */}
+            <ul className="todo-list">
+              {processedTodos.length === 0 ? (
+                <p>No todos to show</p>
+              ) : (
+                processedTodos.map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    todo={todo}
+                    toggleTodo={toggleTodo}
+                    deleteTodo={deleteTodo}
+                    editTodo={handleEditTodo}
+                    priorities={priorities}
+                  />
+                ))
+              )}
+            </ul>
           </div>
         </div>
       )}
-
-      {/* Add Todo Section */}
-      <AddTodo
-        onAddTodo={handleAddTodo}
-        isAddingTodo={isAddingTodo}
-        setIsAddingTodo={setIsAddingTodo}
-        newTodo={newTodo}
-        setNewTodo={setNewTodo}
-      />
-
-      {/* Todo List */}
-      <ul className="todo-list">
-        {processedTodos.length === 0 ? (
-          <p>No todos to show</p>
-        ) : (
-          processedTodos.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              toggleTodo={toggleTodo}
-              deleteTodo={deleteTodo}
-              editTodo={handleEditTodo}
-            />
-          ))
-        )}
-      </ul>
     </div>
   );
 };

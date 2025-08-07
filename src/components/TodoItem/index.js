@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import "./TodoItem.css";
 import { validateTodo } from "../../utils/todoUtils";
 import { getPriorityByValue } from "../../utils/priorityUtils";
-import { PRIORITY } from "../../constants";
+import { getPriorityIcon } from "../../constants/priorityIcons";
 
-const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
+const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo, priorities }) => {
   // States for editing a todo
   const [isEditing, setIsEditing] = useState(false);
   const [invalidEdit, setInvalidEdit] = useState(false);
@@ -61,6 +61,21 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
     setIsPriorityDropdownOpen(false);
     editTodo(todo.id, todo.text, priorityValue);
   };
+
+  // Helper function to get priority icon component
+  const getPriorityIconComponent = (priority) => {
+    const IconComponent = getPriorityIcon(priority, priority?.icon);
+    return <IconComponent />;
+  };
+
+  // Get current priority data
+  const getCurrentPriority = (priorityValue) => {
+    return getPriorityByValue(priorities, priorityValue);
+  };
+
+  const currentPriority = getCurrentPriority(
+    isEditing ? newPriority : todo.priority,
+  );
 
   return (
     // If the todo is completed, add the completed class to the todo item
@@ -133,9 +148,7 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
           <div
             className="todo-item-priority"
             style={{
-              backgroundColor: getPriorityByValue(
-                isEditing ? newPriority : todo.priority,
-              ).bgColor,
+              backgroundColor: currentPriority?.color,
             }}
             // If we are editing the todo make the priority clickable for the user to change the priority
             onClick={() => {
@@ -143,29 +156,28 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }) => {
             }}
           >
             <div className="todo-item-priority-icon">
-              {getPriorityByValue(isEditing ? newPriority : todo.priority).icon}
+              {getPriorityIconComponent(currentPriority)}
             </div>
             <span className="todo-item-priority-label">
-              {
-                getPriorityByValue(isEditing ? newPriority : todo.priority)
-                  .label
-              }
+              {currentPriority?.name}
             </span>
           </div>
           {isPriorityDropdownOpen && (
             <div className="todo-item-priority-dropdown">
-              {Object.values(PRIORITY).map((priority) => (
+              {priorities.map((priority) => (
                 <div
-                  key={priority.value}
+                  key={priority.key}
                   className="todo-item-priority-option"
                   style={{
-                    backgroundColor: priority.bgColor,
+                    backgroundColor: priority.color,
                   }}
-                  onClick={() => handlePrioritySelect(priority.value)}
+                  onClick={() => handlePrioritySelect(priority.key)}
                 >
-                  <div className="todo-item-priority-icon">{priority.icon}</div>
+                  <div className="todo-item-priority-icon">
+                    {getPriorityIconComponent(priority)}
+                  </div>
                   <span className="todo-item-priority-label">
-                    {priority.label}
+                    {priority.name}
                   </span>
                 </div>
               ))}

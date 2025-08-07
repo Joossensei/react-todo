@@ -1,1 +1,1 @@
-export { PRIORITY } from "./priority";
+export { API_ENDPOINTS } from "./apiEndpoints";

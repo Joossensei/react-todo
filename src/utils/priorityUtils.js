@@ -1,9 +1,13 @@
-import { PRIORITY } from "../constants";
-
-export const getPriorityByValue = (value) => {
-  return Object.values(PRIORITY).find((priority) => priority.value === value);
+export const getPriorityByValue = (priorities, value) => {
+  return priorities.find((priority) => priority.key === value);
 };
 
-export const getPriorityOrder = () => {
-  return Object.values(PRIORITY).map((priority) => priority.value);
+export const getPriorityOrder = (priorities) => {
+  return priorities
+    .sort((a, b) => a.order - b.order)
+    .map((priority) => priority.key);
+};
+
+export const getPriorityByKey = (priorities, key) => {
+  return priorities.find((priority) => priority.key === key);
 };

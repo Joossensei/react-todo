@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import "./AddTodo.css";
-import {
-  getPriorityByValue,
-  getPriorityOrder,
-} from "../../utils/priorityUtils";
 import { validateTodo } from "../../utils/todoUtils";
 
 const AddTodo = ({
@@ -12,6 +8,8 @@ const AddTodo = ({
   setIsAddingTodo,
   newTodo,
   setNewTodo,
+  priorities,
+  prioritiesLoading,
 }) => {
   const [invalidAdd, setInvalidAdd] = useState(false);
 
@@ -69,13 +67,16 @@ const AddTodo = ({
               onChange={(e) =>
                 setNewTodo({ ...newTodo, priority: e.target.value })
               }
+              disabled={prioritiesLoading}
             >
               <option value="" disabled>
-                Select Priority
+                {prioritiesLoading
+                  ? "Loading priorities..."
+                  : "Select Priority"}
               </option>
-              {getPriorityOrder().map((priority) => (
-                <option key={priority} value={priority}>
-                  {getPriorityByValue(priority).label}
+              {priorities.map((priority) => (
+                <option key={priority.key} value={priority.key}>
+                  {priority.name}
                 </option>
               ))}
             </select>

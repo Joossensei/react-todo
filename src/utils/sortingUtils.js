@@ -2,13 +2,13 @@
 import { getPriorityOrder } from "./priorityUtils";
 
 // Smart sort functions
-export const sortTodos = (todos, sortBy) => {
+export const sortTodos = (todos, priorities, sortBy) => {
   const sortedTodos = [...todos];
 
   switch (sortBy) {
     case "priority-desc":
       return sortedTodos.sort((a, b) => {
-        const priorityOrder = getPriorityOrder();
+        const priorityOrder = getPriorityOrder(priorities);
         // Return the difference between the index of the priority of the second todo and the first todo
         return (
           priorityOrder.indexOf(b.priority) - priorityOrder.indexOf(a.priority)
@@ -17,7 +17,7 @@ export const sortTodos = (todos, sortBy) => {
 
     case "priority-desc-text-asc":
       return sortedTodos.sort((a, b) => {
-        const priorityOrder = getPriorityOrder();
+        const priorityOrder = getPriorityOrder(priorities);
         // Return the difference between the index of the priority of the second todo and the first todo
         const priorityDiff =
           priorityOrder.indexOf(b.priority) - priorityOrder.indexOf(a.priority);
@@ -34,7 +34,7 @@ export const sortTodos = (todos, sortBy) => {
           return a.completed ? 1 : -1;
         }
         // Then by priority (high to low)
-        const priorityOrder = getPriorityOrder();
+        const priorityOrder = getPriorityOrder(priorities);
         // Return the difference between the index of the priority of the second todo and the first todo
         return (
           priorityOrder.indexOf(b.priority) - priorityOrder.indexOf(a.priority)

@@ -4,15 +4,14 @@ import "@testing-library/jest-dom";
 import AddTodo from "./index";
 
 const mock = jest.genMockFromModule("../../utils/priorityUtils");
-mock.getPriorityByValue = jest.fn((value) => {
-  return { value: value, label: value };
+mock.getPriorityByKey = jest.fn((priorities, key) => {
+  return priorities.find((priority) => priority.key === key);
 });
-mock.getPriorityOrder = jest.fn(() => ["low", "medium", "high", "urgent"]);
+mock.getPriorityOrder = jest.fn((priorities) =>
+  priorities.sort((a, b) => a.order - b.order).map((priority) => priority.key),
+);
 
-import {
-  getPriorityByValue,
-  getPriorityOrder,
-} from "../../utils/priorityUtils";
+import { getPriorityByKey } from "../../utils/priorityUtils";
 
 describe("AddTodo Component", () => {
   const mockProps = {
