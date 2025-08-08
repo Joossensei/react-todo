@@ -3,7 +3,7 @@ import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import "./App.css";
 import TodoList from "./components/TodoList";
 import MenuBar from "./components/MenuBar";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaCode } from "react-icons/fa";
 import PriorityList from "./components/PriorityList";
 import EditTodo from "./components/EditTodo";
 import EditPriority from "./components/EditPriority";
@@ -22,9 +22,14 @@ function App() {
               <a href="https://github.com/Joossensei">
                 <FaGithub />
               </a>
+              <span> & </span>
+              <a href="https://cursor.com">
+                <FaCode />
+              </a>
             </p>
             <p>
-              Made by <a href="https://github.com/Joossensei">Joost Both</a>
+              Made by <a href="https://github.com/Joossensei">Joost Both</a> &{" "}
+              <a href="https://cursor.com">Cursor</a>
             </p>
           </footer>
         </div>
@@ -40,8 +45,6 @@ function App() {
         <Route path="/priorities" element={<PriorityList />} />
         <Route path="/priorities/new" element={<EditPriority />} />
         <Route path="/priorities/:id" element={<EditPriority />} />
-        {/* Optional routes */}
-        <Route path="/tags" element={<div>Tags...</div>} />
         <Route path="/user" element={<div>User...</div>} />
         {/* 404 fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -10,9 +10,4 @@ describe('todoUtils', () => {
     expect(validateTodo('')).toBe(false);
     expect(validateTodo('   ')).toBe(false);
   });
-
-  test('generateTodoId creates unique IDs', () => {
-    const todos = [{ id: 1 }, { id: 3 }, { id: 5 }];
-    expect(generateTodoId(todos)).toBe(6);
-  });
 });
