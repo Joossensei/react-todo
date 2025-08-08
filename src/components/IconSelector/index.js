@@ -98,8 +98,12 @@ const IconSelector = ({
 
           {/* Category Filter */}
           {showCategories && (
-            <div className="icon-categories">
+            <div
+              className="icon-categories"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
+                type="button"
                 className={`category-btn ${selectedCategory === "all" ? "active" : ""}`}
                 onClick={() => setSelectedCategory("all")}
               >
@@ -108,6 +112,7 @@ const IconSelector = ({
               {categories.map((category) => (
                 <button
                   key={category}
+                  type="button"
                   className={`category-btn ${selectedCategory === category ? "active" : ""}`}
                   onClick={() => setSelectedCategory(category)}
                 >

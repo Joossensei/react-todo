@@ -7,7 +7,6 @@ const PRIORITY_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 export const priorityService = {
   // Get priorities with caching
   getPriorities: async () => {
-    console.log("Getting priorities");
     try {
       // Check cache first
       const cached = localStorage.getItem(PRIORITY_CACHE_KEY);
@@ -16,20 +15,13 @@ export const priorityService = {
         const isExpired = Date.now() - timestamp > PRIORITY_CACHE_DURATION;
 
         if (!isExpired) {
-          console.log("Using cached priorities");
           return data;
         }
       }
 
       // Fetch from API if cache is expired or doesn't exist
-      console.log(
-        "Fetching priorities from API (endpoint: ",
-        API_ENDPOINTS.PRIORITIES.LIST,
-        ")",
-      );
       const response = await apiClient.get(API_ENDPOINTS.PRIORITIES.LIST);
 
-      console.log("Priorities fetched from API:", response.data);
       const priorities = response.data.priorities;
 
       // Cache the result

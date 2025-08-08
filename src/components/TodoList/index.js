@@ -4,30 +4,28 @@ import "./TodoList.css";
 // Components
 import TodoItem from "../TodoItem";
 // Utils
-import {
-  generateTodoId,
-  formatTodoText,
-  validateTodo,
-} from "../../utils/todoUtils";
+import { formatTodoText, validateTodo } from "../../utils/todoUtils";
 import { sortTodos, getSortOptions } from "../../utils/sortingUtils";
 // Icons
 import { FaSearch, FaFilter, FaFlag, FaSort, FaBars } from "react-icons/fa";
 // Components
 import AddTodo from "../AddTodo";
 // Hooks
-import { useLocalStorage } from "../../hooks/useLocalStorage";
+// import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { usePriorities } from "../../hooks/usePriorities";
+import { useTodos } from "../../hooks/useTodos";
+import { todoService } from "../../services/todoService";
+import { sortPriorities } from "../../utils/priorityUtils";
 
 // Create the TodoList component
 const TodoList = (props) => {
-  // States for the todos using localStorage persistence
-  const [todos, setTodos] = useLocalStorage("todos", props.standardTodos);
-
   // States for adding a todo
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [newTodo, setNewTodo] = useState({
-    text: "",
+    title: "",
+    description: "",
     priority: "",
+    completed: false,
   });
 
   // States for filtering the todos (reset on refresh)
@@ -46,6 +44,13 @@ const TodoList = (props) => {
     loading: prioritiesLoading,
     error: prioritiesError,
   } = usePriorities();
+
+  const {
+    todos,
+    loading: todosLoading,
+    error: todosError,
+    refreshTodos,
+  } = useTodos();
 
   // Function to get processed todos (filtered and sorted)
   const getProcessedTodos = () => {
@@ -70,7 +75,7 @@ const TodoList = (props) => {
     // Apply search filter
     if (search !== "") {
       processedTodos = processedTodos.filter((todo) =>
-        todo.text.toLowerCase().includes(search.toLowerCase()),
+        todo.title.toLowerCase().includes(search.toLowerCase()),
       );
     }
 
@@ -79,44 +84,41 @@ const TodoList = (props) => {
   };
 
   // Function to toggle the completed status of a todo
-  const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-      ),
-    );
+  const toggleTodo = async (key) => {
+    const todo = todos.find((todo) => todo.key === key);
+    if (!todo) return;
+    await todoService.patchTodo(key, { completed: !todo.completed });
+    await refreshTodos();
   };
 
   // Function to delete a todo
-  const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const deleteTodo = async (key) => {
+    await todoService.deleteTodo(key);
+    await refreshTodos();
   };
 
   // Function to edit a todo (used in TodoItem component)
-  const handleEditTodo = (id, text, priority) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, text, priority } : todo,
-      ),
-    );
+  const handleEditTodo = async (key, text, priority) => {
+    const todo = todos.find((todo) => todo.key === key);
+    if (!todo) return;
+    await todoService.patchTodo(key, {
+      title: formatTodoText(text),
+      priority: priority || todo.priority,
+      completed: todo.completed,
+      description: todo.description,
+    });
+    await refreshTodos();
   };
 
   // Function to add a todo
   const handleAddTodo = async () => {
-    if (!validateTodo(newTodo.text) || newTodo.priority === "") {
+    if (!validateTodo(newTodo.title) || newTodo.priority === "") {
       return;
     }
     setIsAddingTodo(false);
-    setTodos([
-      ...todos,
-      {
-        id: generateTodoId(todos),
-        text: formatTodoText(newTodo.text),
-        completed: false,
-        priority: newTodo.priority,
-      },
-    ]);
-    setNewTodo({ text: "", priority: "" });
+    await todoService.createTodo(newTodo);
+    await refreshTodos();
+    setNewTodo({ title: "", priority: "" });
   };
 
   // Function to toggle mobile menu
@@ -132,6 +134,14 @@ const TodoList = (props) => {
 
   if (prioritiesError) {
     return <div>Error: {prioritiesError}</div>;
+  }
+
+  if (todosLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (todosError) {
+    return <div>Error: {todosError}</div>;
   }
 
   return (
@@ -161,34 +171,38 @@ const TodoList = (props) => {
             <div className="header-row filter-row">
               <div className="filter-container">
                 <FaFilter className="filter-icon" />
-                <select
-                  id="filterTodos"
-                  className="filter-select"
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                >
-                  <option value="all">All Status</option>
-                  <option value="completed">Completed</option>
-                  <option value="incomplete">Incomplete</option>
-                </select>
+                <div className="custom-select">
+                  <select
+                    id="filterTodos"
+                    className="filter-select"
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                  >
+                    <option value="all">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="incomplete">Incomplete</option>
+                  </select>
+                </div>
               </div>
 
               <div className="filter-container">
                 <FaFlag className="priority-icon" />
-                <select
-                  id="filterPriority"
-                  className="filter-select"
-                  value={filterPriority}
-                  onChange={(e) => setFilterPriority(e.target.value)}
-                  disabled={prioritiesLoading}
-                >
-                  <option value="">All Priorities</option>
-                  {priorities.map((priority) => (
-                    <option key={priority.key} value={priority.key}>
-                      {priority.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="custom-select">
+                  <select
+                    id="filterPriority"
+                    className="filter-select"
+                    value={filterPriority}
+                    onChange={(e) => setFilterPriority(e.target.value)}
+                    disabled={prioritiesLoading}
+                  >
+                    <option value="">All Priorities</option>
+                    {sortPriorities(priorities).map((priority) => (
+                      <option key={priority.key} value={priority.key}>
+                        {priority.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -196,18 +210,20 @@ const TodoList = (props) => {
             <div className="header-row sort-row">
               <div className="sort-container">
                 <FaSort className="sort-icon" />
-                <select
-                  id="sortTodos"
-                  className="sort-select"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  {getSortOptions().map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="custom-select">
+                  <select
+                    id="sortTodos"
+                    className="sort-select"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    {getSortOptions().map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -235,47 +251,53 @@ const TodoList = (props) => {
             <div className="mobile-menu">
               <div className="mobile-menu-section">
                 <h4>Filter by Status</h4>
-                <select
-                  className="mobile-filter-select"
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                >
-                  <option value="all">All Status</option>
-                  <option value="completed">Completed</option>
-                  <option value="incomplete">Incomplete</option>
-                </select>
+                <div className="custom-select">
+                  <select
+                    className="mobile-filter-select"
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                  >
+                    <option value="all">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="incomplete">Incomplete</option>
+                  </select>
+                </div>
               </div>
 
               <div className="mobile-menu-section">
                 <h4>Filter by Priority</h4>
-                <select
-                  className="mobile-filter-select"
-                  value={filterPriority}
-                  onChange={(e) => setFilterPriority(e.target.value)}
-                  disabled={prioritiesLoading}
-                >
-                  <option value="">All Priorities</option>
-                  {priorities.map((priority) => (
-                    <option key={priority.key} value={priority.key}>
-                      {priority.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="custom-select">
+                  <select
+                    className="mobile-filter-select"
+                    value={filterPriority}
+                    onChange={(e) => setFilterPriority(e.target.value)}
+                    disabled={prioritiesLoading}
+                  >
+                    <option value="">All Priorities</option>
+                    {sortPriorities(priorities).map((priority) => (
+                      <option key={priority.key} value={priority.key}>
+                        {priority.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="mobile-menu-section">
                 <h4>Sort by</h4>
-                <select
-                  className="mobile-sort-select"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  {getSortOptions().map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="custom-select">
+                  <select
+                    className="mobile-sort-select"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    {getSortOptions().map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           )}
@@ -287,7 +309,7 @@ const TodoList = (props) => {
               setIsAddingTodo={setIsAddingTodo}
               newTodo={newTodo}
               setNewTodo={setNewTodo}
-              priorities={priorities}
+              priorities={sortPriorities(priorities)}
               prioritiesLoading={prioritiesLoading}
             />
 
@@ -298,12 +320,15 @@ const TodoList = (props) => {
               ) : (
                 processedTodos.map((todo) => (
                   <TodoItem
-                    key={todo.id}
+                    key={todo.key}
                     todo={todo}
                     toggleTodo={toggleTodo}
                     deleteTodo={deleteTodo}
                     editTodo={handleEditTodo}
-                    priorities={priorities}
+                    onOpen={() =>
+                      props.onOpenTodo && props.onOpenTodo(todo.key)
+                    }
+                    priorities={sortPriorities(priorities)}
                   />
                 ))
               )}

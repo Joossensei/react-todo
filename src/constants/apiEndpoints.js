@@ -5,6 +5,7 @@ export const API_ENDPOINTS = {
     GET: (id) => `/todos/${id}/`,
     UPDATE: (id) => `/todos/${id}/`,
     DELETE: (id) => `/todos/${id}/`,
+    PATCH: (id) => `/todos/${id}/`,
   },
   PRIORITIES: {
     LIST: "/priorities/", // ← Add trailing slash

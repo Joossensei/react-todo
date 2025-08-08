@@ -3,7 +3,7 @@ import "./PriorityForm.css";
 import IconSelector from "../IconSelector";
 import { DEFAULT_PRIORITY_ICON_MAPPING } from "../../constants/priorityIcons";
 
-const PriorityForm = ({ priority = null, onSave, onCancel }) => {
+const EditPriority = ({ priority = null, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     name: priority?.name || "",
     description: priority?.description || "",
@@ -151,4 +151,4 @@ const PriorityForm = ({ priority = null, onSave, onCancel }) => {
   );
 };
 
-export default PriorityForm;
+export default EditPriority;

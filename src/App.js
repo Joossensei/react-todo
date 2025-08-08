@@ -3,10 +3,12 @@ import "./App.css";
 import TodoList from "./components/TodoList";
 import MenuBar from "./components/MenuBar";
 import { FaGithub } from "react-icons/fa";
-import PriorityForm from "./components/PriorityForm";
+import PriorityList from "./components/PriorityList";
+import EditTodo from "./components/EditTodo";
 
 function App() {
   const [activeMenuItem, setActiveMenuItem] = useState("home");
+  const [selectedTodoKey, setSelectedTodoKey] = useState(null);
 
   const standardTodos = [
     {
@@ -37,21 +39,30 @@ function App() {
 
   const handleMenuClick = (menuItem) => {
     setActiveMenuItem(menuItem);
-    // Here you can add logic to handle different menu items
-    console.log(`Switched to ${menuItem} view`);
   };
 
   const renderContent = () => {
     switch (activeMenuItem) {
       case "home":
-        return (
+        return selectedTodoKey ? (
+          <div className="content-section">
+            <EditTodo
+              todoKey={selectedTodoKey}
+              onBack={() => setSelectedTodoKey(null)}
+            />
+          </div>
+        ) : (
           <div className="content-section">
             <h1>Todo App</h1>
             <p>
               Todo app where you can add, edit, complete, delete and filter
               todos
             </p>
-            <TodoList title="Personal Tasks" standardTodos={standardTodos} />
+            <TodoList
+              title="Personal Tasks"
+              standardTodos={standardTodos}
+              onOpenTodo={(key) => setSelectedTodoKey(key)}
+            />
           </div>
         );
       case "priorities":
@@ -59,14 +70,7 @@ function App() {
           <div className="content-section">
             <h1>Priorities</h1>
             <p>Manage the priorities which you can handout to your todos.</p>
-            <div className="placeholder-content">
-              <h3>Priority Management</h3>
-              <p>
-                This section will contain priority creation, editing, and
-                filtering features.
-              </p>
-              <PriorityForm />
-            </div>
+            <PriorityList />
           </div>
         );
       case "tags":
@@ -97,14 +101,25 @@ function App() {
           </div>
         );
       default:
-        return (
+        return selectedTodoKey ? (
+          <div className="content-section">
+            <EditTodo
+              todoKey={selectedTodoKey}
+              onBack={() => setSelectedTodoKey(null)}
+            />
+          </div>
+        ) : (
           <div className="content-section">
             <h1>Todo App</h1>
             <p>
               Todo app where you can add, edit, complete, delete and filter
               todos
             </p>
-            <TodoList title="Personal Tasks" standardTodos={standardTodos} />
+            <TodoList
+              title="Personal Tasks"
+              standardTodos={standardTodos}
+              onOpenTodo={(key) => setSelectedTodoKey(key)}
+            />
           </div>
         );
     }

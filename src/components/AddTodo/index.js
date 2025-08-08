@@ -15,7 +15,7 @@ const AddTodo = ({
 
   const handleAddTodo = () => {
     // Validate the todo input
-    if (!validateTodo(newTodo.text) || newTodo.priority === "") {
+    if (!validateTodo(newTodo.title) || newTodo.priority === "") {
       setInvalidAdd(true);
       return;
     }
@@ -49,8 +49,10 @@ const AddTodo = ({
               className="add-todo-input"
               type="text"
               placeholder="Add a todo"
-              value={newTodo.text}
-              onChange={(e) => setNewTodo({ ...newTodo, text: e.target.value })}
+              value={newTodo.title}
+              onChange={(e) =>
+                setNewTodo({ ...newTodo, title: e.target.value })
+              }
               onSubmit={handleAddTodo}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {

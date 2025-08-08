@@ -1,0 +1,175 @@
+.edit-todo-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.edit-todo-header-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.back-btn {
+  background: transparent;
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background: #f3f4f6;
+}
+
+.page-title {
+  margin: 0;
+}
+
+.edit-todo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-label {
+  font-weight: 600;
+  margin: 0;
+  text-align: left;
+}
+
+.text-input,
+.textarea-input,
+.select-input {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.filter-input {
+  width: 100%;
+}
+
+.textarea-input {
+  resize: vertical;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.primary-btn {
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: #1d4ed8;
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid #ddd;
+  color: #111827;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: #f3f4f6;
+}
+
+.error-text {
+  color: #b91c1c;
+}
+
+/* Priority dropdown reused from TodoItem styling approach */
+.priority-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.edit-todo-item-priority {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 220px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.edit-todo-item-priority:hover {
+  filter: brightness(0.98);
+}
+
+.edit-todo-item-priority-icon {
+  display: inline-flex;
+}
+
+.edit-todo-item-priority-label {
+  font-weight: 600;
+}
+
+.edit-todo-item-priority-dropdown {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-top: none;
+}
+
+.edit-todo-item-priority-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.edit-todo-item-priority-option:hover {
+  filter: brightness(0.96);
+}
+
+.description-row {
+  grid-template-columns: 160px 1fr;
+  align-items: flex-start;
+}

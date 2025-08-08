@@ -25,32 +25,8 @@ import {
   FaAt,
   FaPercent,
   FaGem,
+  FaExclamationCircle,
 } from "react-icons/fa";
-
-import {
-  IoAlertCircle,
-  IoWarning,
-  IoSpeedometer,
-  IoFlame,
-  IoFlash,
-  IoRocket,
-  IoTime,
-  IoNotifications,
-  IoStar,
-  IoFlag,
-} from "react-icons/io5";
-
-import {
-  MdPriorityHigh,
-  MdFlag,
-  MdStar,
-  MdWarning,
-  MdInfo,
-  MdNotifications,
-  MdSpeed,
-  MdTrendingUp,
-  MdTrendingDown,
-} from "react-icons/md";
 
 // Define available priority icons with categories
 export const PRIORITY_ICONS = {
@@ -85,26 +61,15 @@ export const PRIORITY_ICONS = {
   },
   "fa-fire": { component: FaFire, name: "Fire", category: "priority" },
   "fa-bolt": { component: FaBolt, name: "Lightning", category: "priority" },
-  "io-alert-circle": {
-    component: IoAlertCircle,
-    name: "Alert Circle",
+  "fa-circle-exclamation": {
+    component: FaExclamationCircle,
+    name: "Exclamation Circle",
     category: "priority",
   },
-  "io-warning": { component: IoWarning, name: "Warning", category: "priority" },
-  "md-priority-high": {
-    component: MdPriorityHigh,
-    name: "Priority High",
-    category: "priority",
-  },
-  "md-warning": { component: MdWarning, name: "Warning", category: "priority" },
 
   // Flags & Markers
   "fa-flag": { component: FaFlag, name: "Flag", category: "markers" },
-  "io-flag": { component: IoFlag, name: "Flag Outline", category: "markers" },
-  "md-flag": { component: MdFlag, name: "Material Flag", category: "markers" },
   "fa-star": { component: FaStar, name: "Star", category: "markers" },
-  "io-star": { component: IoStar, name: "Star Outline", category: "markers" },
-  "md-star": { component: MdStar, name: "Material Star", category: "markers" },
 
   // Shapes & Basic
   "fa-minus": { component: FaMinus, name: "Minus", category: "basic" },
@@ -120,13 +85,6 @@ export const PRIORITY_ICONS = {
     name: "Calendar",
     category: "time",
   },
-  "io-time": { component: IoTime, name: "Time", category: "time" },
-  "io-speedometer": {
-    component: IoSpeedometer,
-    name: "Speedometer",
-    category: "time",
-  },
-  "md-speed": { component: MdSpeed, name: "Speed", category: "time" },
 
   // Action & Status
   "fa-check": { component: FaCheck, name: "Check", category: "status" },
@@ -138,7 +96,6 @@ export const PRIORITY_ICONS = {
     name: "Question",
     category: "status",
   },
-  "md-info": { component: MdInfo, name: "Material Info", category: "status" },
 
   // Special Symbols
   "fa-hashtag": { component: FaHashtag, name: "Hashtag", category: "symbols" },
@@ -149,33 +106,6 @@ export const PRIORITY_ICONS = {
     category: "symbols",
   },
   "fa-percent": { component: FaPercent, name: "Percent", category: "symbols" },
-
-  // Trending & Movement
-  "md-trending-up": {
-    component: MdTrendingUp,
-    name: "Trending Up",
-    category: "trending",
-  },
-  "md-trending-down": {
-    component: MdTrendingDown,
-    name: "Trending Down",
-    category: "trending",
-  },
-  "io-rocket": { component: IoRocket, name: "Rocket", category: "trending" },
-  "io-flash": { component: IoFlash, name: "Flash", category: "trending" },
-  "io-flame": { component: IoFlame, name: "Flame", category: "trending" },
-
-  // Notifications
-  "io-notifications": {
-    component: IoNotifications,
-    name: "Notifications",
-    category: "notifications",
-  },
-  "md-notifications": {
-    component: MdNotifications,
-    name: "Material Notifications",
-    category: "notifications",
-  },
 };
 
 // Default icon mappings for existing priority keys
@@ -187,9 +117,13 @@ export const DEFAULT_PRIORITY_ICON_MAPPING = {
 };
 
 // Get icon component by key
-export const getIconComponent = (iconKey) => {
+export const getIconComponent = (iconKey, color = "black") => {
   const iconData = PRIORITY_ICONS[iconKey];
-  return iconData ? iconData.component : PRIORITY_ICONS["fa-minus"].component;
+  const IconComponent = iconData
+    ? iconData.component
+    : PRIORITY_ICONS["fa-minus"].component;
+
+  return <IconComponent color={color} />;
 };
 
 // Get icon name by key
