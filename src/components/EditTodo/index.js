@@ -3,8 +3,16 @@ import "./EditTodo.css";
 import { usePriorities } from "../../hooks/usePriorities";
 import { todoService } from "../../services/todoService";
 import { getPriorityIcon } from "../../constants/priorityIcons";
+import { useParams, useNavigate } from "react-router-dom";
 
-const EditTodo = ({ todoKey, onBack }) => {
+const EditTodo = () => {
+  const { id } = useParams();
+  const todoKey = id;
+
+  const navigate = useNavigate();
+
+  const handleBack = () => navigate(-1);
+
   const {
     priorities,
     loading: prioritiesLoading,
@@ -75,7 +83,7 @@ const EditTodo = ({ todoKey, onBack }) => {
       // Refresh todos
       await todoService.refreshTodos();
       // Go back to list; TodoList will refetch on mount
-      onBack?.();
+      handleBack();
     } catch (err) {
       setError(err?.message || "Failed to save todo");
     } finally {
@@ -95,7 +103,7 @@ const EditTodo = ({ todoKey, onBack }) => {
     return (
       <div className="edit-todo-page">
         <div className="edit-todo-header-col">
-          <button className="back-btn" onClick={onBack}>
+          <button className="back-btn" onClick={handleBack}>
             &larr; Back
           </button>
           <h2 className="page-title">Edit Todo</h2>
@@ -108,7 +116,7 @@ const EditTodo = ({ todoKey, onBack }) => {
   return (
     <div className="edit-todo-page">
       <div className="edit-todo-header-col">
-        <button className="back-btn" onClick={onBack}>
+        <button className="back-btn" onClick={handleBack}>
           &larr; Back
         </button>
         <h2 className="page-title">Edit Todo</h2>
@@ -159,7 +167,10 @@ const EditTodo = ({ todoKey, onBack }) => {
                   ? "1px 1px 0 1px solid #e5e7eb"
                   : "1px solid #e5e7eb",
               }}
-              onClick={() => setIsPriorityDropdownOpen(!isPriorityDropdownOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsPriorityDropdownOpen(!isPriorityDropdownOpen);
+              }}
             >
               <div className="edit-todo-item-priority-icon">
                 {(() => {
@@ -177,7 +188,10 @@ const EditTodo = ({ todoKey, onBack }) => {
             </div>
 
             {isPriorityDropdownOpen && (
-              <div className="edit-todo-item-priority-dropdown">
+              <div
+                className="edit-todo-item-priority-dropdown"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {priorities.map((p) => {
                   const Icon = getPriorityIcon(p, p?.icon);
                   return (
@@ -185,7 +199,8 @@ const EditTodo = ({ todoKey, onBack }) => {
                       key={p.key}
                       className="edit-todo-item-priority-option"
                       style={{ backgroundColor: p.color }}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setPriority(p.key);
                         setIsPriorityDropdownOpen(false);
                       }}
@@ -217,7 +232,11 @@ const EditTodo = ({ todoKey, onBack }) => {
         </div>
 
         <div className="form-actions">
-          <button className="secondary-btn" onClick={onBack} disabled={saving}>
+          <button
+            className="secondary-btn"
+            onClick={handleBack}
+            disabled={saving}
+          >
             Cancel
           </button>
           <button

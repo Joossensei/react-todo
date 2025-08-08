@@ -74,11 +74,7 @@ const IconSelector = ({
             : "Select an icon"
         }
       >
-        {SelectedIconComponent ? (
-          <SelectedIconComponent />
-        ) : (
-          <span className="no-icon-placeholder">?</span>
-        )}
+        {SelectedIconComponent ?? <span className="no-icon-placeholder">?</span>}
         <span className="dropdown-arrow">{isOpen ? "▲" : "▼"}</span>
       </button>
 
@@ -142,7 +138,7 @@ const IconSelector = ({
                       onClick={() => handleIconSelect(iconKey)}
                       title={iconData.name}
                     >
-                      <IconComponent />
+                      <IconComponent color={iconData.color} />
                     </button>
                   );
                 })}

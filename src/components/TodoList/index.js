@@ -16,9 +16,11 @@ import { usePriorities } from "../../hooks/usePriorities";
 import { useTodos } from "../../hooks/useTodos";
 import { todoService } from "../../services/todoService";
 import { sortPriorities } from "../../utils/priorityUtils";
+import { useNavigate } from "react-router-dom";
 
 // Create the TodoList component
 const TodoList = (props) => {
+  const navigate = useNavigate();
   // States for adding a todo
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [newTodo, setNewTodo] = useState({
@@ -325,9 +327,7 @@ const TodoList = (props) => {
                     toggleTodo={toggleTodo}
                     deleteTodo={deleteTodo}
                     editTodo={handleEditTodo}
-                    onOpen={() =>
-                      props.onOpenTodo && props.onOpenTodo(todo.key)
-                    }
+                    onOpen={() => navigate(`/todos/${todo.key}`)}
                     priorities={sortPriorities(priorities)}
                   />
                 ))

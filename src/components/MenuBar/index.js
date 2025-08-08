@@ -1,12 +1,14 @@
 import React from "react";
 import "./MenuBar.css";
+import { Link, useLocation } from "react-router-dom";
 
-const MenuBar = ({ activeItem, onItemClick }) => {
+const MenuBar = () => {
+  const location = useLocation();
   const menuItems = [
-    { id: "home", label: "Home", icon: "🏠" },
-    { id: "priorities", label: "Priorities", icon: "⭐" },
-    { id: "tags", label: "Tags", icon: "🏷️" },
-    { id: "user", label: "User", icon: "👤" },
+    { id: "home", label: "Home", icon: "🏠", to: "/" },
+    { id: "priorities", label: "Priorities", icon: "⭐", to: "/priorities" },
+    { id: "tags", label: "Tags", icon: "🏷️", to: "/tags" },
+    { id: "user", label: "User", icon: "👤", to: "/user" },
   ];
 
   return (
@@ -20,13 +22,13 @@ const MenuBar = ({ activeItem, onItemClick }) => {
         <ul className="menu-items">
           {menuItems.map((item) => (
             <li key={item.id}>
-              <button
-                className={`menu-item ${activeItem === item.id ? "active" : ""}`}
-                onClick={() => onItemClick(item.id)}
+              <Link
+                to={item.to}
+                className={`menu-item ${location.pathname === item.to ? "active" : ""}`}
               >
                 <span className="menu-icon">{item.icon}</span>
                 <span className="menu-label">{item.label}</span>
-              </button>
+              </Link>
             </li>
           ))}
         </ul>

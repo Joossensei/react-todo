@@ -1,20 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PriorityForm.css";
 import IconSelector from "../IconSelector";
-import { DEFAULT_PRIORITY_ICON_MAPPING } from "../../constants/priorityIcons";
+import {
+  DEFAULT_PRIORITY_ICON_MAPPING,
+  getIconComponent,
+} from "../../constants/priorityIcons";
+import { useNavigate, useParams } from "react-router-dom";
+import { priorityService } from "../../services/priorityService";
 
-const EditPriority = ({ priority = null, onSave, onCancel }) => {
+const EditPriority = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const priorityKey = id;
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [formData, setFormData] = useState({
-    name: priority?.name || "",
-    description: priority?.description || "",
-    color: priority?.color || "#6b7280",
-    icon: priority?.icon || DEFAULT_PRIORITY_ICON_MAPPING.medium,
-    order: priority?.order || 1,
+    name: "",
+    description: "",
+    color: "#6b7280",
+    icon: DEFAULT_PRIORITY_ICON_MAPPING.medium,
+    order: 1,
   });
 
+  useEffect(() => {
+    const fetchPriority = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        if (!priorityKey) {
+          setFormData({
+            name: "",
+            description: "",
+            color: "#6b7280",
+            icon: DEFAULT_PRIORITY_ICON_MAPPING.medium,
+            order: 1,
+          });
+        } else {
+          const data = await priorityService.getPriority(priorityKey);
+          setFormData({
+            name: data?.name || "",
+            description: data?.description || "",
+            color: data?.color || "#6b7280",
+            icon: data?.icon || DEFAULT_PRIORITY_ICON_MAPPING.medium,
+            order: data?.order || 1,
+          });
+        }
+      } catch (err) {
+        setError(err?.message || "Failed to fetch priority");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPriority();
+  }, [priorityKey]);
+
+  // State for form validation errors
   const [errors, setErrors] = useState({});
 
-  const validateForm = () => {
+  const isValidColor = (color) => {
+    // Check if color is a valid hex color
+    const hexRegex = /^#([0-9A-Fa-f]{6})$/;
+    return hexRegex.test(color);
+  };
+
+  // Validate form data before saving
+  const validateForm = async () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
@@ -25,22 +77,51 @@ const EditPriority = ({ priority = null, onSave, onCancel }) => {
       newErrors.color = "Color is required";
     }
 
+    // Filter out invalid colors
+    if (!isValidColor(formData.color)) {
+      newErrors.color = "Invalid color format";
+    }
+
     if (formData.order < 1) {
       newErrors.order = "Order must be at least 1";
     }
 
+    // Check availability
+    const availability = await priorityService.checkAvailability(formData);
+    if (!availability.available) {
+      if (availability.message.includes("Name")) {
+        newErrors.name = availability.message;
+      } else if (availability.message.includes("Order")) {
+        newErrors.order = availability.message;
+      } else {
+        newErrors.name = availability.message;
+      }
+    }
+
+    // Set errors and return true if no errors
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    // Prevent default form submission behavior
     e.preventDefault();
 
-    if (validateForm()) {
-      onSave(formData);
+    // Validate form data before saving
+    if (await validateForm()) {
+      if (priorityKey) {
+        priorityService.updatePriority(priorityKey, formData);
+      } else {
+        priorityService.createPriority(formData);
+      }
+      // Refresh priorities
+      await priorityService.refreshPriorities();
+      navigate(-1);
     }
   };
 
+  // Handle input changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -56,6 +137,15 @@ const EditPriority = ({ priority = null, onSave, onCancel }) => {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Render the form
   return (
     <div className="priority-form">
       <form onSubmit={handleSubmit}>
@@ -139,11 +229,15 @@ const EditPriority = ({ priority = null, onSave, onCancel }) => {
         </div>
 
         <div className="form-actions">
-          <button type="button" onClick={onCancel} className="btn-secondary">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="btn-secondary"
+          >
             Cancel
           </button>
           <button type="submit" className="btn-primary">
-            {priority ? "Update Priority" : "Create Priority"}
+            {priorityKey ? "Update Priority" : "Create Priority"}
           </button>
         </div>
       </form>

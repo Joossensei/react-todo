@@ -83,6 +83,26 @@ export const priorityService = {
 
     return response.data;
   },
+
+  // Get priority by key
+  getPriority: async (key) => {
+    const response = await apiClient.get(API_ENDPOINTS.PRIORITIES.GET(key));
+    return response.data;
+  },
+
+  // Check availability
+  checkAvailability: async (priorityData) => {
+    const response = await apiClient.post(
+      API_ENDPOINTS.PRIORITIES.CHECK_AVAILABILITY,
+      priorityData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    return response.data;
+  },
 };
 
 // Fallback default priorities

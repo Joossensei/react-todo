@@ -13,5 +13,6 @@ export const API_ENDPOINTS = {
     GET: (id) => `/priorities/${id}/`,
     UPDATE: (id) => `/priorities/${id}/`,
     DELETE: (id) => `/priorities/${id}/`,
+    CHECK_AVAILABILITY: `/priorities/util/check-availability`,
   },
 };

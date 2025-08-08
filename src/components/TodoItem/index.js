@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./TodoItem.css";
-import { validateTodo } from "../../utils/todoUtils";
 import { getPriorityByValue } from "../../utils/priorityUtils";
 import { getPriorityIcon } from "../../constants/priorityIcons";
+import { useNavigate } from "react-router-dom";
 
 const TodoItem = ({
   todo,
@@ -51,11 +51,12 @@ const TodoItem = ({
   };
 
   const currentPriority = getCurrentPriority(todo.priority);
+  const navigate = useNavigate();
   return (
     // If the todo is completed, add the completed class to the todo item
     <li
       className={`todo-item${todo.completed ? " completed" : ""}${isPriorityDropdownOpen ? " dropdown-open" : ""}`}
-      onClick={() => onOpen && onOpen(todo.key)}
+      onClick={() => navigate(`/todos/${todo.key}`)}
       style={{ cursor: onOpen ? "pointer" : "default" }}
     >
       <div className="todo-item-container-wrapper">

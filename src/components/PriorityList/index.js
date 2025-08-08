@@ -10,8 +10,11 @@ import EditPriority from "../EditPriority";
 // Icons
 import { getIconComponent } from "../../constants/priorityIcons";
 import { FaEdit, FaTrash, FaPlus, FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const PriorityList = () => {
+  const navigate = useNavigate();
+
   // States for priorities management
   const {
     priorities,
@@ -73,20 +76,17 @@ const PriorityList = () => {
 
   // Function to handle edit button click
   const handleEditClick = (priority) => {
-    setEditingPriority(priority);
-    setShowForm(true);
+    navigate(`/priorities/${priority.key}`);
   };
 
   // Function to handle new priority button click
   const handleNewPriorityClick = () => {
-    setEditingPriority(null);
-    setShowForm(true);
+    navigate(`/priorities/new`);
   };
 
   // Function to handle form cancel
   const handleFormCancel = () => {
-    setEditingPriority(null);
-    setShowForm(false);
+    navigate(-1);
   };
 
   // Function to toggle description visibility
