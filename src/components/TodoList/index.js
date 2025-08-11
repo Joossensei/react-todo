@@ -37,7 +37,7 @@ const TodoList = (props) => {
   const [search, setSearch] = useState("");
 
   // States for sorting (reset on refresh)
-  const [sortBy, setSortBy] = useState("priority-desc");
+  const [sortBy, setSortBy] = useState("incomplete-priority-desc");
 
   // States for mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
