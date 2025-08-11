@@ -2,17 +2,29 @@ export const API_ENDPOINTS = {
   TODOS: {
     LIST: "/todos/",
     CREATE: "/todos/",
-    GET: (id) => `/todos/${id}/`,
-    UPDATE: (id) => `/todos/${id}/`,
-    DELETE: (id) => `/todos/${id}/`,
-    PATCH: (id) => `/todos/${id}/`,
+    GET: (key) => `/todos/${key}/`,
+    UPDATE: (key) => `/todos/${key}/`,
+    DELETE: (key) => `/todos/${key}/`,
+    PATCH: (key) => `/todos/${key}/`,
   },
   PRIORITIES: {
     LIST: "/priorities/", // ← Add trailing slash
     CREATE: "/priorities/",
-    GET: (id) => `/priorities/${id}/`,
-    UPDATE: (id) => `/priorities/${id}/`,
-    DELETE: (id) => `/priorities/${id}/`,
+    GET: (key) => `/priorities/${key}/`,
+    UPDATE: (key) => `/priorities/${key}/`,
+    DELETE: (key) => `/priorities/${key}/`,
     CHECK_AVAILABILITY: `/priorities/util/check-availability`,
+  },
+  USER: {
+    LIST: "/users/",
+    CREATE: "/users/",
+    UPDATE: (key) => `/users/${key}/`,
+    DELETE: (key) => `/users/${key}/`,
+    GET: (key) => `/users/${key}/`,
+    CURRENT: "/users/me/",
+  },
+  AUTH: {
+    TOKEN: "/token/",
+    FORGOT_PASSWORD: (key) => `/users/${key}/reset-password/`,
   },
 };

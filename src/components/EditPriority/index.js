@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./PriorityForm.css";
 import IconSelector from "../IconSelector";
-import {
-  DEFAULT_PRIORITY_ICON_MAPPING,
-  getIconComponent,
-} from "../../constants/priorityIcons";
+import { DEFAULT_PRIORITY_ICON_MAPPING } from "../../constants/priorityIcons";
 import { useNavigate, useParams } from "react-router-dom";
 import { priorityService } from "../../services/priorityService";
+import { userService } from "../../services/userService";
 
 const EditPriority = () => {
   const navigate = useNavigate();
@@ -86,6 +84,8 @@ const EditPriority = () => {
       newErrors.order = "Order must be at least 1";
     }
 
+    formData.user_key = userService.getUserKey();
+
     // Check availability
     const availability = await priorityService.checkAvailability(formData);
     if (!availability.available) {
@@ -110,14 +110,23 @@ const EditPriority = () => {
 
     // Validate form data before saving
     if (await validateForm()) {
-      if (priorityKey) {
-        priorityService.updatePriority(priorityKey, formData);
-      } else {
-        priorityService.createPriority(formData);
+      formData.user_key = userService.getUserKey();
+      try {
+        if (priorityKey) {
+          await priorityService.updatePriority(priorityKey, formData);
+        } else {
+          await priorityService.createPriority(formData);
+        }
+        // Refresh priorities after a successful save
+        await priorityService.refreshPriorities();
+        navigate(-1);
+      } catch (err) {
+        setError(
+          err?.response?.data?.message ||
+            err?.message ||
+            "Failed to save priority",
+        );
       }
-      // Refresh priorities
-      await priorityService.refreshPriorities();
-      navigate(-1);
     }
   };
 

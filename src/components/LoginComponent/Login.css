@@ -1,0 +1,133 @@
+/* Page container consistent with other pages */
+.login-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Card look aligned with .container content sections */
+.login-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.login-title {
+  margin: 0 0 4px 0;
+  color: #111827;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.login-subtitle {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* Reuse form patterns from EditTodo/PriorityForm */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-label {
+  font-weight: 600;
+  margin: 0;
+  text-align: left;
+}
+
+.text-input {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.login-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.login-btn {
+  /* primary-btn is defined elsewhere; we just augment spacing */
+  padding: 10px 16px;
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.auth-text {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.auth-link {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  .login-btn {
+    width: 100%;
+  }
+
+  .auth-links {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}

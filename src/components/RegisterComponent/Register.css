@@ -1,0 +1,53 @@
+/* Mirrors Login styles for visual consistency */
+.register-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.register-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.register-title {
+  margin: 0 0 4px 0;
+  color: #111827;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.register-subtitle {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 14px;
+  text-align: left;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.register-btn {
+  padding: 10px 16px;
+}
+
+@media (max-width: 640px) {
+  .register-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}

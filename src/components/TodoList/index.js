@@ -17,6 +17,7 @@ import { useTodos } from "../../hooks/useTodos";
 import { todoService } from "../../services/todoService";
 import { sortPriorities } from "../../utils/priorityUtils";
 import { useNavigate } from "react-router-dom";
+import { userService } from "../../services/userService";
 
 // Create the TodoList component
 const TodoList = (props) => {
@@ -118,6 +119,7 @@ const TodoList = (props) => {
       return;
     }
     setIsAddingTodo(false);
+    newTodo.user_key = userService.getUserKey();
     await todoService.createTodo(newTodo);
     await refreshTodos();
     setNewTodo({ title: "", priority: "" });
@@ -135,6 +137,9 @@ const TodoList = (props) => {
   }
 
   if (prioritiesError) {
+    if (prioritiesError.message === "Unauthorized") {
+      navigate("/login");
+    }
     return <div>Error: {prioritiesError}</div>;
   }
 
@@ -143,6 +148,10 @@ const TodoList = (props) => {
   }
 
   if (todosError) {
+    console.log(todosError);
+    if (todosError === "Request failed with status code 401") {
+      navigate("/login");
+    }
     return <div>Error: {todosError}</div>;
   }
 
@@ -336,6 +345,18 @@ const TodoList = (props) => {
           </div>
         </div>
       )}
+
+      <div>
+        {priorities.length === 0 && (
+          <div>
+            <h2>No priorities found</h2>
+            <p>Please create a priority to get started</p>
+            <button onClick={() => navigate("/priorities/new")}>
+              Create Priority
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

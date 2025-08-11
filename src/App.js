@@ -7,6 +7,12 @@ import { FaGithub, FaCode } from "react-icons/fa";
 import PriorityList from "./components/PriorityList";
 import EditTodo from "./components/EditTodo";
 import EditPriority from "./components/EditPriority";
+import LoginComponent from "./components/LoginComponent";
+import RegisterComponent from "./components/RegisterComponent";
+import ForgotPassword from "./components/ForgotPassword";
+import { userService } from "./services/userService";
+
+userService.installInterceptors({ loginPath: "/login" });
 
 function App() {
   function AppLayout() {
@@ -45,6 +51,9 @@ function App() {
         <Route path="/priorities" element={<PriorityList />} />
         <Route path="/priorities/new" element={<EditPriority />} />
         <Route path="/priorities/:id" element={<EditPriority />} />
+        <Route path="/login" element={<LoginComponent />} />
+        <Route path="/register" element={<RegisterComponent />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/user" element={<div>User...</div>} />
         {/* 404 fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

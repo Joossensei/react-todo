@@ -7,7 +7,7 @@ const MenuBar = () => {
   const menuItems = [
     { id: "home", label: "Home", icon: "🏠", to: "/" },
     { id: "priorities", label: "Priorities", icon: "⭐", to: "/priorities" },
-    { id: "user", label: "User", icon: "👤", to: "/user" },
+    { id: "user", label: "", icon: "👤", to: "/user" },
   ];
 
   return (
@@ -26,7 +26,9 @@ const MenuBar = () => {
                 className={`menu-item ${location.pathname === item.to ? "active" : ""}`}
               >
                 <span className="menu-icon">{item.icon}</span>
-                <span className="menu-label">{item.label}</span>
+                {item.label.length > 0 && (
+                  <span className="menu-label">{item.label}</span>
+                )}
               </Link>
             </li>
           ))}
