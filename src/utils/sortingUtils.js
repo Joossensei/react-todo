@@ -24,7 +24,7 @@ export const sortTodos = (todos, priorities, sortBy) => {
         // If the priorities are different, return the difference
         if (priorityDiff !== 0) return priorityDiff;
         // If the priorities are the same, return the difference between the text of the second todo and the first todo
-        return a.text.localeCompare(b.text);
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
       });
 
     case "incomplete-priority-desc":
@@ -43,11 +43,11 @@ export const sortTodos = (todos, priorities, sortBy) => {
 
     case "text-asc":
       // Return the difference between the text of the second todo and the first todo
-      return sortedTodos.sort((a, b) => a.text.localeCompare(b.text));
+      return sortedTodos.sort((a, b) => a.name.localeCompare(b.name));
 
     case "text-desc":
       // Return the difference between the text of the second todo and the first todo
-      return sortedTodos.sort((a, b) => b.text.localeCompare(a.text));
+      return sortedTodos.sort((a, b) => b.name.localeCompare(a.name));
 
     default:
       return sortedTodos;

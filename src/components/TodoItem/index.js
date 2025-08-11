@@ -42,7 +42,16 @@ const TodoItem = ({
   // Helper function to get priority icon component
   const getPriorityIconComponent = (priority) => {
     const IconComponent = getPriorityIcon(priority, priority?.icon);
-    return <IconComponent />;
+    return (
+      <IconComponent
+        style={{
+          color:
+            priority.color.charAt(0) === "#" && priority.color.charAt(1) === "0"
+              ? "white"
+              : "black",
+        }}
+      />
+    );
   };
 
   // Get current priority data
@@ -86,7 +95,18 @@ const TodoItem = ({
             <div className="todo-item-priority-icon">
               {getPriorityIconComponent(currentPriority)}
             </div>
-            <span className="todo-item-priority-label">
+
+            <span
+              className="todo-item-priority-label"
+              style={{
+                // If the color of the priority is dark, make the text white
+                color:
+                  currentPriority.color.charAt(0) === "#" &&
+                  currentPriority.color.charAt(1) === "0"
+                    ? "white"
+                    : "black",
+              }}
+            >
               {currentPriority?.name}
             </span>
           </div>
@@ -110,7 +130,17 @@ const TodoItem = ({
                   <div className="todo-item-priority-icon">
                     {getPriorityIconComponent(priority)}
                   </div>
-                  <span className="todo-item-priority-label">
+                  <span
+                    className="todo-item-priority-label"
+                    style={{
+                      // If the color of the priority is dark, make the text white
+                      color:
+                        priority.color.charAt(0) === "#" &&
+                        priority.color.charAt(1) === "0"
+                          ? "white"
+                          : "black",
+                    }}
+                  >
                     {priority.name}
                   </span>
                 </div>

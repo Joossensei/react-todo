@@ -19,9 +19,9 @@ export const API_ENDPOINTS = {
     LIST: "/users/",
     CREATE: "/users/",
     UPDATE: (key) => `/users/${key}/`,
+    UPDATE_PASSWORD: (key) => `/users/${key}/password/`,
     DELETE: (key) => `/users/${key}/`,
     GET: (key) => `/users/${key}/`,
-    CURRENT: "/users/me/",
   },
   AUTH: {
     TOKEN: "/token/",

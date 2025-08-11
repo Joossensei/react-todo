@@ -166,6 +166,15 @@ const EditTodo = () => {
                 border: isPriorityDropdownOpen
                   ? "1px 1px 0 1px solid #e5e7eb"
                   : "1px solid #e5e7eb",
+                color:
+                  priorities
+                    .find((p) => p.key === priority)
+                    ?.color.charAt(0) === "#" &&
+                  priorities
+                    .find((p) => p.key === priority)
+                    ?.color.charAt(1) === "0"
+                    ? "white"
+                    : "black",
               }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -198,7 +207,13 @@ const EditTodo = () => {
                     <div
                       key={p.key}
                       className="edit-todo-item-priority-option"
-                      style={{ backgroundColor: p.color }}
+                      style={{
+                        backgroundColor: p.color,
+                        color:
+                          p.color.charAt(0) === "#" && p.color.charAt(1) === "0"
+                            ? "white"
+                            : "black",
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
                         setPriority(p.key);

@@ -85,18 +85,7 @@ const EditPriority = () => {
     }
 
     formData.user_key = userService.getUserKey();
-
-    // Check availability
-    const availability = await priorityService.checkAvailability(formData);
-    if (!availability.available) {
-      if (availability.message.includes("Name")) {
-        newErrors.name = availability.message;
-      } else if (availability.message.includes("Order")) {
-        newErrors.order = availability.message;
-      } else {
-        newErrors.name = availability.message;
-      }
-    }
+    formData.key = priorityKey;
 
     // Set errors and return true if no errors
     setErrors(newErrors);
@@ -112,20 +101,33 @@ const EditPriority = () => {
     if (await validateForm()) {
       formData.user_key = userService.getUserKey();
       try {
+        let response;
         if (priorityKey) {
-          await priorityService.updatePriority(priorityKey, formData);
+          response = await priorityService.updatePriority(
+            priorityKey,
+            formData,
+          );
         } else {
-          await priorityService.createPriority(formData);
+          response = await priorityService.createPriority(formData);
         }
-        // Refresh priorities after a successful save
-        await priorityService.refreshPriorities();
-        navigate(-1);
+
+        if (response.key) {
+          // Refresh priorities after a successful save
+          await priorityService.refreshPriorities();
+          navigate(-1);
+        } else {
+        }
       } catch (err) {
-        setError(
-          err?.response?.data?.message ||
-            err?.message ||
-            "Failed to save priority",
-        );
+        const response = err.response;
+        const newErrors = {};
+        if (response.data.detail.includes("Name")) {
+          newErrors.name = response.data.detail;
+        } else if (response.data.detail.includes("order")) {
+          newErrors.order = response.data.detail;
+        } else {
+          newErrors.name = response.data.detail;
+        }
+        setErrors(newErrors);
       }
     }
   };

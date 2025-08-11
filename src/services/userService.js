@@ -141,6 +141,13 @@ export const userService = {
     return localStorage.getItem("user_key");
   },
 
+  // Registration
+  register: async ({ name, username, email, password, is_active = true }) => {
+    const payload = { name, username, email, password, is_active };
+    const resp = await apiClient.post(API_ENDPOINTS.USER.CREATE, payload);
+    return resp.data; // created user
+  },
+
   // Attach axios interceptors to (1) inject Authorization header and (2) handle 401s
   installInterceptors: ({ loginPath = USER_LOGIN_ROUTE } = {}) => {
     if (interceptorsInstalled) return;
@@ -178,5 +185,70 @@ export const userService = {
         return Promise.reject(error);
       },
     );
+  },
+
+  // Get current authenticated user
+  getCurrentUser: async () => {
+    const resp = await apiClient.get(
+      API_ENDPOINTS.USER.GET(userService.getUserKey()),
+    );
+    return resp.data;
+  },
+
+  // Get list of users
+  getUsers: async () => {
+    const resp = await apiClient.get(API_ENDPOINTS.USER.LIST);
+    // Normalize a few common shapes
+    return resp.data?.users || resp.data?.results || resp.data;
+  },
+
+  // Change password for current user
+  updatePassword: async ({ oldPassword, newPassword }) => {
+    const userKey = userService.getUserKey();
+    if (!userKey) throw new Error("Missing user key for password update");
+    const payload = {
+      current_password: oldPassword,
+      password: newPassword,
+    };
+    const resp = await apiClient.put(
+      API_ENDPOINTS.USER.UPDATE_PASSWORD(userKey),
+      payload,
+    );
+    return resp.data;
+  },
+
+  // Update current user fields (e.g., username, email)
+  updateUser: async (updates) => {
+    const userKey = userService.getUserKey();
+    if (!userKey) throw new Error("Missing user key for update");
+    try {
+      const resp = await apiClient.put(
+        API_ENDPOINTS.USER.UPDATE(userKey),
+        updates,
+      );
+      return resp.data;
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 405) {
+        const resp = await apiClient.patch(
+          API_ENDPOINTS.USER.UPDATE(userKey),
+          updates,
+        );
+        return resp.data;
+      }
+      throw err;
+    }
+  },
+
+  // Logout and redirect to login
+  logout: ({ redirectTo = "/login" } = {}) => {
+    try {
+      userService.clearToken();
+      localStorage.removeItem("user_key");
+    } finally {
+      if (typeof window !== "undefined") {
+        window.location.assign(redirectTo);
+      }
+    }
   },
 };

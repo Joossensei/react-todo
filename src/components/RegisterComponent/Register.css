@@ -33,6 +33,16 @@
   gap: 12px;
 }
 
+.with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label-icon {
+  color: #6b7280;
+}
+
 .register-error {
   background: #fef2f2;
   color: #b91c1c;
@@ -44,6 +54,61 @@
 
 .register-btn {
   padding: 10px 16px;
+}
+
+.password-checker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 8px 10px;
+  border: 1px dashed #e5e7eb;
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+/* Password visibility toggle */
+.input-wrapper {
+  position: relative;
+}
+
+.toggle-visibility-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 4px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.toggle-visibility-btn:hover {
+  color: #374151;
+}
+
+.checker-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.checker-row .ok {
+  color: #059669;
+}
+
+.checker-row .warn {
+  color: #b45309;
+}
+
+.checker-row .required {
+  color: #db0a0a;
+}
+
+.checker-row.optional span {
+  color: #6b7280;
 }
 
 @media (max-width: 640px) {

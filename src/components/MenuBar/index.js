@@ -1,6 +1,9 @@
 import React from "react";
 import "./MenuBar.css";
 import { Link, useLocation } from "react-router-dom";
+import { FaUser } from "react-icons/fa";
+import { BsIncognito } from "react-icons/bs";
+import { userService } from "../../services/userService";
 
 const MenuBar = () => {
   const location = useLocation();
@@ -25,7 +28,23 @@ const MenuBar = () => {
                 to={item.to}
                 className={`menu-item ${location.pathname === item.to ? "active" : ""}`}
               >
-                <span className="menu-icon">{item.icon}</span>
+                {item.id === "user" && (
+                  <>
+                    {userService.getUserKey() !== null && (
+                      <span className="menu-icon">
+                        <FaUser />
+                      </span>
+                    )}
+                    {userService.getUserKey() === null && (
+                      <span className="menu-icon">
+                        <BsIncognito />
+                      </span>
+                    )}
+                  </>
+                )}
+                {item.id !== "user" && (
+                  <span className="menu-icon">{item.icon}</span>
+                )}
                 {item.label.length > 0 && (
                   <span className="menu-label">{item.label}</span>
                 )}

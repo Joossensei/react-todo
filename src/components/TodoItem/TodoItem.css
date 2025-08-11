@@ -200,7 +200,10 @@
   margin-top: 2px;
   animation: dropdownFadeIn 0.2s ease;
   z-index: 1002;
-  width: 20%;
+  width: 23%;
+  max-height: min(100px, 50vh);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .todo-item-priority-option {
