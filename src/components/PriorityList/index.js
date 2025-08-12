@@ -11,6 +11,7 @@ import EditPriority from "../EditPriority";
 import { getIconComponent } from "../../constants/priorityIcons";
 import { FaEdit, FaTrash, FaPlus, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import StatusBanner from "../StatusBanner";
 
 const PriorityList = () => {
   const navigate = useNavigate();
@@ -28,10 +29,12 @@ const PriorityList = () => {
   const [showForm, setShowForm] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [deletingPriority, setDeletingPriority] = useState(null);
+  const [listError, setListError] = useState("");
 
   // Function to handle priority save (create or update)
   const handlePrioritySave = async (priorityData) => {
     try {
+      setListError("");
       if (editingPriority) {
         // Update existing priority
         await priorityService.updatePriority(editingPriority.key, priorityData);
@@ -48,7 +51,9 @@ const PriorityList = () => {
       setShowForm(false);
     } catch (error) {
       console.error("Failed to save priority:", error);
-      alert("Failed to save priority. Please try again.");
+      setListError(
+        error?.message || "Failed to save priority. Please try again.",
+      );
     }
   };
 
@@ -64,11 +69,14 @@ const PriorityList = () => {
 
     try {
       setDeletingPriority(priority.key);
+      setListError("");
       await priorityService.deletePriority(priority.key);
       await refreshPriorities();
     } catch (error) {
       console.error("Failed to delete priority:", error);
-      alert("Failed to delete priority. Please try again.");
+      setListError(
+        error?.message || "Failed to delete priority. Please try again.",
+      );
     } finally {
       setDeletingPriority(null);
     }
@@ -98,10 +106,7 @@ const PriorityList = () => {
   if (prioritiesLoading) {
     return (
       <div className="priority-listing-container">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading priorities...</p>
-        </div>
+        <StatusBanner type="loading">Loading priorities…</StatusBanner>
       </div>
     );
   }
@@ -110,19 +115,14 @@ const PriorityList = () => {
   if (prioritiesError) {
     return (
       <div className="priority-listing-container">
-        <div className="error-container">
-          <h3>Error Loading Priorities</h3>
-          <p>{prioritiesError}</p>
-          <button className="btn-primary" onClick={refreshPriorities}>
-            Retry
-          </button>
-        </div>
+        <StatusBanner type="error">{prioritiesError}</StatusBanner>
       </div>
     );
   }
 
   return (
     <div className="priority-listing-container">
+      {listError && <StatusBanner type="error">{listError}</StatusBanner>}
       <div className="priority-listing-header">
         <div className="header-content">
           <h2>Priority Management</h2>

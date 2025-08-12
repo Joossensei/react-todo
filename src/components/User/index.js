@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./User.css";
 import { userService } from "../../services/userService";
+import StatusBanner from "../StatusBanner";
 import {
   FaUser,
   FaEnvelope,
@@ -219,9 +220,9 @@ const User = () => {
         <p className="user-subtitle">Manage your profile and security</p>
 
         {loading ? (
-          <div className="user-banner info">Loading your data…</div>
+          <StatusBanner type="loading">Loading your data…</StatusBanner>
         ) : error ? (
-          <div className="user-banner error">{error}</div>
+          <StatusBanner type="error">{error}</StatusBanner>
         ) : (
           <>
             <div className="user-info">

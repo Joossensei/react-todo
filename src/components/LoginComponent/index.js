@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Login.css";
+import StatusBanner from "../StatusBanner";
 import { userService } from "../../services/userService";
 import { useNavigate } from "react-router-dom";
 
@@ -18,18 +19,22 @@ const LoginComponent = () => {
       return;
     }
 
-    await userService.loginRaw({
-      data: {
-        grant_type: "password",
-        username: username,
-        password: password,
-        scope: "todos,priorities",
-        client_id: "todoapp",
-        client_secret: "todoapp",
-      },
-      contentType: "application/x-www-form-urlencoded",
-    });
-    navigate("/");
+    try {
+      await userService.loginRaw({
+        data: {
+          grant_type: "password",
+          username: username,
+          password: password,
+          scope: "todos,priorities",
+          client_id: "todoapp",
+          client_secret: "todoapp",
+        },
+        contentType: "application/x-www-form-urlencoded",
+      });
+      navigate("/");
+    } catch (e) {
+      setError(e?.message || "Login failed. Please try again.");
+    }
   }
 
   return (
@@ -38,11 +43,7 @@ const LoginComponent = () => {
         <h1 className="login-title">Welcome back</h1>
         <p className="login-subtitle">Sign in to continue to TodoApp</p>
 
-        {error && (
-          <div className="login-error" role="alert">
-            {error}
-          </div>
-        )}
+        {error && <StatusBanner type="error" message={error} />}
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>
           <div className="form-row">

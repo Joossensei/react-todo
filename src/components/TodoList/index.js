@@ -18,10 +18,12 @@ import { todoService } from "../../services/todoService";
 import { sortPriorities } from "../../utils/priorityUtils";
 import { useNavigate } from "react-router-dom";
 import { userService } from "../../services/userService";
+import StatusBanner from "../StatusBanner";
 
 // Create the TodoList component
 const TodoList = (props) => {
   const navigate = useNavigate();
+  const [actionError, setActionError] = useState("");
   // States for adding a todo
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [newTodo, setNewTodo] = useState({
@@ -88,41 +90,65 @@ const TodoList = (props) => {
 
   // Function to toggle the completed status of a todo
   const toggleTodo = async (key) => {
-    const todo = todos.find((todo) => todo.key === key);
-    if (!todo) return;
-    await todoService.patchTodo(key, { completed: !todo.completed });
-    await refreshTodos();
+    try {
+      setActionError("");
+      const todo = todos.find((todo) => todo.key === key);
+      if (!todo) return;
+      await todoService.patchTodo(key, { completed: !todo.completed });
+      await refreshTodos();
+    } catch (e) {
+      setActionError(
+        e?.message || "Failed to update the todo. Please try again.",
+      );
+    }
   };
 
   // Function to delete a todo
   const deleteTodo = async (key) => {
-    await todoService.deleteTodo(key);
-    await refreshTodos();
+    try {
+      setActionError("");
+      await todoService.deleteTodo(key);
+      await refreshTodos();
+    } catch (e) {
+      setActionError(
+        e?.message || "Failed to delete the todo. Please try again.",
+      );
+    }
   };
 
   // Function to edit a todo (used in TodoItem component)
   const handleEditTodo = async (key, text, priority) => {
-    const todo = todos.find((todo) => todo.key === key);
-    if (!todo) return;
-    await todoService.patchTodo(key, {
-      title: formatTodoText(text),
-      priority: priority || todo.priority,
-      completed: todo.completed,
-      description: todo.description,
-    });
-    await refreshTodos();
+    try {
+      setActionError("");
+      const todo = todos.find((todo) => todo.key === key);
+      if (!todo) return;
+      await todoService.patchTodo(key, {
+        title: formatTodoText(text),
+        priority: priority || todo.priority,
+        completed: todo.completed,
+        description: todo.description,
+      });
+      await refreshTodos();
+    } catch (e) {
+      setActionError(e?.message || "Failed to save changes. Please try again.");
+    }
   };
 
   // Function to add a todo
   const handleAddTodo = async () => {
-    if (!validateTodo(newTodo.title) || newTodo.priority === "") {
-      return;
+    try {
+      setActionError("");
+      if (!validateTodo(newTodo.title) || newTodo.priority === "") {
+        return;
+      }
+      setIsAddingTodo(false);
+      newTodo.user_key = userService.getUserKey();
+      await todoService.createTodo(newTodo);
+      await refreshTodos();
+      setNewTodo({ title: "", priority: "" });
+    } catch (e) {
+      setActionError(e?.message || "Failed to add the todo. Please try again.");
     }
-    setIsAddingTodo(false);
-    newTodo.user_key = userService.getUserKey();
-    await todoService.createTodo(newTodo);
-    await refreshTodos();
-    setNewTodo({ title: "", priority: "" });
   };
 
   // Function to toggle mobile menu
@@ -133,18 +159,18 @@ const TodoList = (props) => {
   const processedTodos = getProcessedTodos();
 
   if (prioritiesLoading) {
-    return <div>Loading...</div>;
+    return <StatusBanner type="loading">Loading…</StatusBanner>;
   }
 
   if (prioritiesError) {
     if (prioritiesError.message === "Unauthorized") {
       navigate("/login");
     }
-    return <div>Error: {prioritiesError}</div>;
+    return <StatusBanner type="error">{prioritiesError}</StatusBanner>;
   }
 
   if (todosLoading) {
-    return <div>Loading...</div>;
+    return <StatusBanner type="loading">Loading…</StatusBanner>;
   }
 
   if (todosError) {
@@ -152,12 +178,14 @@ const TodoList = (props) => {
     if (todosError === "Request failed with status code 401") {
       navigate("/login");
     }
-    return <div>Error: {todosError}</div>;
+    return <StatusBanner type="error">{todosError}</StatusBanner>;
   }
 
   return (
     <div className="todo-list-container">
       <h1>{props.title}</h1>
+
+      {actionError && <StatusBanner type="error">{actionError}</StatusBanner>}
 
       {priorities.length > 0 && (
         <div>

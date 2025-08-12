@@ -149,11 +149,32 @@ const EditPriority = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="priority-form">
+        <div className="form-header">
+          <h2>{priorityKey ? "Edit Priority" : "Create Priority"}</h2>
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <span> </span>
+        </div>
+        <div>
+          <span>Loading…</span>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="priority-form">
+        <div className="form-header">
+          <h2>{priorityKey ? "Edit Priority" : "Create Priority"}</h2>
+        </div>
+        <div className="form-errors" role="alert" style={{ marginBottom: 8 }}>
+          {error}
+        </div>
+      </div>
+    );
   }
 
   // Render the form

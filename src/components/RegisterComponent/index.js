@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
+import StatusBanner from "../StatusBanner";
 import { userService } from "../../services/userService";
 import {
   FaUser,
@@ -83,8 +84,7 @@ const RegisterComponent = () => {
         // 3) Navigate to home
         navigate("/");
       } catch (e) {
-        const apiMsg = e?.response?.data?.detail || e?.response?.data?.message;
-        setError(apiMsg || e?.message || "Registration failed");
+        setError(e?.message || "Registration failed");
       } finally {
         setSubmitting(false);
       }
@@ -97,11 +97,7 @@ const RegisterComponent = () => {
         <h1 className="register-title">Create your account</h1>
         <p className="register-subtitle">Join TodoApp in seconds</p>
 
-        {error && (
-          <div className="register-error" role="alert">
-            {error}
-          </div>
-        )}
+        {error && <StatusBanner type="error" message={error} />}
 
         <form className="register-form" onSubmit={handleSubmit} noValidate>
           <div className="form-row">

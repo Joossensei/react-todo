@@ -4,6 +4,7 @@ import { usePriorities } from "../../hooks/usePriorities";
 import { todoService } from "../../services/todoService";
 import { getPriorityIcon } from "../../constants/priorityIcons";
 import { useParams, useNavigate } from "react-router-dom";
+import StatusBanner from "../StatusBanner";
 
 const EditTodo = () => {
   const { id } = useParams();
@@ -21,6 +22,7 @@ const EditTodo = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actionError, setActionError] = useState("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -74,6 +76,7 @@ const EditTodo = () => {
     try {
       setSaving(true);
       setError(null);
+      setActionError("");
       await todoService.updateTodo(todoKey, {
         title,
         description,
@@ -85,7 +88,7 @@ const EditTodo = () => {
       // Go back to list; TodoList will refetch on mount
       handleBack();
     } catch (err) {
-      setError(err?.message || "Failed to save todo");
+      setActionError(err?.message || "Failed to save todo");
     } finally {
       setSaving(false);
     }
@@ -94,7 +97,7 @@ const EditTodo = () => {
   if (loading) {
     return (
       <div className="edit-todo-page">
-        <p>Loading...</p>
+        <StatusBanner type="loading">Loading…</StatusBanner>
       </div>
     );
   }
@@ -108,7 +111,7 @@ const EditTodo = () => {
           </button>
           <h2 className="page-title">Edit Todo</h2>
         </div>
-        <p className="error-text">Error: {error}</p>
+        <StatusBanner type="error">{error}</StatusBanner>
       </div>
     );
   }
@@ -123,6 +126,7 @@ const EditTodo = () => {
       </div>
 
       <div className="edit-todo-form">
+        {actionError && <StatusBanner type="error">{actionError}</StatusBanner>}
         <div className="form-row">
           <label className="form-label" htmlFor="todoTitle">
             Title
