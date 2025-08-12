@@ -5,9 +5,17 @@ import "./TodoList.css";
 import TodoItem from "../TodoItem";
 // Utils
 import { formatTodoText, validateTodo } from "../../utils/todoUtils";
-import { sortTodos, getSortOptions } from "../../utils/sortingUtils";
+import { getSortOptions } from "../../utils/sortingUtils";
 // Icons
-import { FaSearch, FaFilter, FaFlag, FaSort, FaBars } from "react-icons/fa";
+import {
+  FaSearch,
+  FaFilter,
+  FaFlag,
+  FaSort,
+  FaBars,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 // Components
 import AddTodo from "../AddTodo";
 // Hooks
@@ -33,12 +41,12 @@ const TodoList = (props) => {
     completed: false,
   });
 
-  // States for filtering the todos (reset on refresh)
+  // States for filtering the todos (server-driven)
   const [filter, setFilter] = useState("all");
   const [filterPriority, setFilterPriority] = useState("");
   const [search, setSearch] = useState("");
 
-  // States for sorting (reset on refresh)
+  // State for sorting (server-driven)
   const [sortBy, setSortBy] = useState("incomplete-priority-desc");
 
   // States for mobile menu
@@ -50,42 +58,38 @@ const TodoList = (props) => {
     error: prioritiesError,
   } = usePriorities();
 
+  const completedFilter =
+    filter === "completed" ? true : filter === "incomplete" ? false : undefined;
+
   const {
     todos,
+    total,
+    page,
     loading: todosLoading,
     error: todosError,
-    refreshTodos,
-  } = useTodos();
+    goToNext,
+    goToPrev,
+    refetch,
+    fetchPage,
+  } = useTodos({
+    initialPage: 1,
+    size: 10,
+    sort: sortBy,
+    completed: completedFilter,
+    priority: filterPriority || undefined,
+  });
 
-  // Function to get processed todos (filtered and sorted)
+  // Only apply client-side search to the current page
   const getProcessedTodos = () => {
-    let processedTodos = [...todos];
-
-    // Apply completed filter
-    if (filter !== "all") {
-      processedTodos = processedTodos.filter((todo) => {
-        if (filter === "completed") return todo.completed;
-        if (filter === "incomplete") return !todo.completed;
-        return true;
-      });
-    }
-
-    // Apply priority filter
-    if (filterPriority !== "") {
-      processedTodos = processedTodos.filter(
-        (todo) => todo.priority === filterPriority,
-      );
-    }
-
-    // Apply search filter
+    let processedTodos = Array.isArray(todos) ? [...todos] : [];
     if (search !== "") {
       processedTodos = processedTodos.filter((todo) =>
-        todo.title.toLowerCase().includes(search.toLowerCase()),
+        String(todo.title || "")
+          .toLowerCase()
+          .includes(search.toLowerCase()),
       );
     }
-
-    // Apply sorting
-    return sortTodos(processedTodos, priorities, sortBy);
+    return processedTodos;
   };
 
   // Function to toggle the completed status of a todo
@@ -95,7 +99,7 @@ const TodoList = (props) => {
       const todo = todos.find((todo) => todo.key === key);
       if (!todo) return;
       await todoService.patchTodo(key, { completed: !todo.completed });
-      await refreshTodos();
+      await refetch();
     } catch (e) {
       setActionError(
         e?.message || "Failed to update the todo. Please try again.",
@@ -108,7 +112,7 @@ const TodoList = (props) => {
     try {
       setActionError("");
       await todoService.deleteTodo(key);
-      await refreshTodos();
+      await refetch();
     } catch (e) {
       setActionError(
         e?.message || "Failed to delete the todo. Please try again.",
@@ -128,7 +132,7 @@ const TodoList = (props) => {
         completed: todo.completed,
         description: todo.description,
       });
-      await refreshTodos();
+      await refetch();
     } catch (e) {
       setActionError(e?.message || "Failed to save changes. Please try again.");
     }
@@ -144,7 +148,7 @@ const TodoList = (props) => {
       setIsAddingTodo(false);
       newTodo.user_key = userService.getUserKey();
       await todoService.createTodo(newTodo);
-      await refreshTodos();
+      await refetch();
       setNewTodo({ title: "", priority: "" });
     } catch (e) {
       setActionError(e?.message || "Failed to add the todo. Please try again.");
@@ -157,6 +161,7 @@ const TodoList = (props) => {
   };
 
   const processedTodos = getProcessedTodos();
+  const totalPages = Math.max(1, Math.ceil((Number(total) || 0) / 10));
 
   if (prioritiesLoading) {
     return <StatusBanner type="loading">Loading…</StatusBanner>;
@@ -254,7 +259,11 @@ const TodoList = (props) => {
                     id="sortTodos"
                     className="sort-select"
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(e) => {
+                      setSortBy(e.target.value);
+                      // Reset to first page on sort change
+                      fetchPage(1);
+                    }}
                   >
                     {getSortOptions().map((option) => (
                       <option key={option.value} value={option.value}>
@@ -352,6 +361,31 @@ const TodoList = (props) => {
               prioritiesLoading={prioritiesLoading}
             />
 
+            {/* Compact pager below Add Todo (hidden on mobile) */}
+            <div className="compact-pager-row">
+              <div className="compact-pager">
+                <button
+                  className="pager-btn"
+                  onClick={goToPrev}
+                  disabled={page <= 1}
+                  title="Previous page"
+                >
+                  <FaChevronLeft />
+                </button>
+                <span className="pager-label">
+                  {page} of {totalPages}
+                </span>
+                <button
+                  className="pager-btn"
+                  onClick={goToNext}
+                  disabled={page >= totalPages}
+                  title="Next page"
+                >
+                  <FaChevronRight />
+                </button>
+              </div>
+            </div>
+
             {/* Todo List */}
             <ul className="todo-list">
               {processedTodos.length === 0 ? (
@@ -370,6 +404,35 @@ const TodoList = (props) => {
                 ))
               )}
             </ul>
+
+            {/* Pagination controls */}
+            <div
+              className="pagination-controls"
+              style={{
+                marginTop: 12,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <button
+                className="btn-secondary"
+                onClick={goToPrev}
+                disabled={page <= 1}
+              >
+                Previous
+              </button>
+              <div>
+                Page {page} of {totalPages}
+              </div>
+              <button
+                className="btn-secondary"
+                onClick={goToNext}
+                disabled={page >= totalPages}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,47 +1,37 @@
 // src/services/todoService.js
 import apiClient from "./apiClient";
 import { API_ENDPOINTS } from "../constants/apiEndpoints";
-// Cache
-const TODO_CACHE_KEY = "todo_todos";
-const TODO_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export const todoService = {
-  // Get all todos
-  getTodos: async () => {
+  // Get paginated todos with server-side sort/filter
+  getTodos: async ({ page = 1, size = 10, sort, completed, priority } = {}) => {
     try {
-      // Check cache first
-      const cached = localStorage.getItem(TODO_CACHE_KEY);
-      if (cached) {
-        const { data, timestamp } = JSON.parse(cached);
-        const isExpired = Date.now() - timestamp > TODO_CACHE_DURATION;
+      const params = { page, size };
+      if (sort) params.sort = sort;
+      if (typeof completed === "boolean") params.completed = completed;
+      if (priority) params.priority = priority;
 
-        if (!isExpired) {
-          return data;
-        }
-      }
-
-      // Fetch from API if cache is expired or doesn't exist
-      const response = await apiClient.get(API_ENDPOINTS.TODOS.LIST);
-      const todos = response.data.todos;
-
-      // Cache the result
-      const cacheData = {
-        data: todos,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(TODO_CACHE_KEY, JSON.stringify(cacheData));
-
-      return todos;
+      const response = await apiClient.get(API_ENDPOINTS.TODOS.LIST, {
+        params,
+      });
+      // Expect { todos, total, page, size, success, next_link, prev_link }
+      return response.data;
     } catch (error) {
       console.error("Failed to fetch todos:", error);
       throw error;
     }
   },
 
-  // Force refresh from API
-  refreshTodos: async () => {
-    localStorage.removeItem(TODO_CACHE_KEY);
-    return await todoService.getTodos();
+  // Follow server-provided navigation link (next_link/prev_link)
+  getTodosByLink: async (link) => {
+    if (!link) throw new Error("getTodosByLink requires a link");
+    try {
+      const response = await apiClient.get(link);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch todos via link:", error);
+      throw error;
+    }
   },
 
   // Create new todo
