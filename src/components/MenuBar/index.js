@@ -1,6 +1,6 @@
 import React from "react";
 import "./MenuBar.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { FaUser } from "react-icons/fa";
 import { BsIncognito } from "react-icons/bs";
 import { userService } from "../../services/userService";

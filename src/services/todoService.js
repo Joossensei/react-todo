@@ -57,6 +57,7 @@ export const todoService = {
 
   // Patch todo
   patchTodo: async (id, todoData) => {
+    console.log("patching todo", id, todoData);
     const response = await apiClient.patch(
       API_ENDPOINTS.TODOS.PATCH(id),
       todoData,

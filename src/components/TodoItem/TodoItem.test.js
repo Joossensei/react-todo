@@ -1,7 +1,9 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { renderWithProviders } from "../../test-utils/renderWithProviders";
 import TodoItem from "./index";
+import { BrowserRouter } from "react-router";
 
 // Mock data for testing
 const mockTodo = {
@@ -20,37 +22,13 @@ const mockCompletedTodo = {
 
 const mock = jest.genMockFromModule("../../utils/priorityUtils");
 mock.getPriorityByValue = jest.fn((value) => {
-  const mockPriorities = {
-    low: {
-      key: "low",
-      name: "Low",
-      color: "#6b7280",
-      icon: "↓",
-      bgColor: "#f3f4f6",
-    },
-    medium: {
-      key: "medium",
-      name: "Medium",
-      color: "#f59e0b",
-      icon: "−",
-      bgColor: "#fef3c7",
-    },
-    high: {
-      key: "high",
-      name: "High",
-      color: "#ef4444",
-      icon: "↑",
-      bgColor: "#fee2e2",
-    },
-    urgent: {
-      key: "urgent",
-      name: "Urgent",
-      color: "#dc2626",
-      icon: "⚠",
-      bgColor: "#fecaca",
-    },
-  };
-  return mockPriorities[key] || { key: key, name: name };
+  const arr = [
+    { key: "low", name: "Low", color: "#6b7280" },
+    { key: "medium", name: "Medium", color: "#f59e0b" },
+    { key: "high", name: "High", color: "#ef4444" },
+    { key: "urgent", name: "Urgent", color: "#dc2626" },
+  ];
+  return arr.find((p) => p.key === value) || { key: value, name: value };
 });
 
 import { getPriorityByValue } from "../../utils/priorityUtils";
@@ -60,6 +38,12 @@ describe("TodoItem Component", () => {
     toggleTodo: jest.fn(),
     deleteTodo: jest.fn(),
     editTodo: jest.fn(),
+    priorities: [
+      { key: "low", name: "Low", color: "#6b7280" },
+      { key: "medium", name: "Medium", color: "#f59e0b" },
+      { key: "high", name: "High", color: "#ef4444" },
+      { key: "urgent", name: "Urgent", color: "#dc2626" },
+    ],
   };
 
   beforeEach(() => {
@@ -67,36 +51,60 @@ describe("TodoItem Component", () => {
   });
 
   test("renders todo text correctly", () => {
-    render(<TodoItem todo={mockTodo} {...mockProps} />);
+    render(
+      <BrowserRouter>
+        <TodoItem todo={mockTodo} {...mockProps} />
+      </BrowserRouter>,
+    );
     expect(screen.getByText("Learn React Testing")).toBeInTheDocument();
   });
 
   test("renders completed todo with correct styling", () => {
-    render(<TodoItem todo={mockCompletedTodo} {...mockProps} />);
+    render(
+      <BrowserRouter>
+        <TodoItem todo={mockCompletedTodo} {...mockProps} />
+      </BrowserRouter>,
+    );
     const todoItem = screen.getByText("Build Todo App").closest("li");
     expect(todoItem).toHaveClass("completed");
   });
 
   test("renders non-completed todo without completed class", () => {
-    render(<TodoItem todo={mockTodo} {...mockProps} />);
+    render(
+      <BrowserRouter>
+        <TodoItem todo={mockTodo} {...mockProps} />
+      </BrowserRouter>,
+    );
     const todoItem = screen.getByText("Learn React Testing").closest("li");
     expect(todoItem).not.toHaveClass("completed");
   });
 
   test("checkbox is checked for completed todo", () => {
-    render(<TodoItem todo={mockCompletedTodo} {...mockProps} />);
+    render(
+      <BrowserRouter>
+        <TodoItem todo={mockCompletedTodo} {...mockProps} />
+      </BrowserRouter>,
+    );
     const checkbox = screen.getByRole("checkbox");
     expect(checkbox).toBeChecked();
   });
 
   test("checkbox is unchecked for non-completed todo", () => {
-    render(<TodoItem todo={mockTodo} {...mockProps} />);
+    render(
+      <BrowserRouter>
+        <TodoItem todo={mockTodo} {...mockProps} />
+      </BrowserRouter>,
+    );
     const checkbox = screen.getByRole("checkbox");
     expect(checkbox).not.toBeChecked();
   });
 
   test("renders edit and delete buttons", () => {
-    render(<TodoItem todo={mockTodo} {...mockProps} />);
+    render(
+      <BrowserRouter>
+        <TodoItem todo={mockTodo} {...mockProps} />
+      </BrowserRouter>,
+    );
     expect(screen.getByText("Edit")).toBeInTheDocument();
     expect(screen.getByText("Delete")).toBeInTheDocument();
   });

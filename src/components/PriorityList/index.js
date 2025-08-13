@@ -1,28 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // CSS
 import "./PriorityListing.css";
 // Hooks
-import { usePriorities } from "../../hooks/usePriorities";
+import { observer } from "mobx-react-lite";
+import { useStores } from "../../stores/RootStoreContext";
 // Services
 import { priorityService } from "../../services/priorityService";
 // Components
 import EditPriority from "../EditPriority";
 // Icons
 import { getIconComponent } from "../../constants/priorityIcons";
-import { FaEdit, FaTrash, FaPlus, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaEye,
+  FaEyeSlash,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import StatusBanner from "../StatusBanner";
 
-const PriorityList = () => {
+const PriorityList = observer(() => {
   const navigate = useNavigate();
+  const { priorityStore } = useStores();
 
   // States for priorities management
-  const {
-    priorities,
-    loading: prioritiesLoading,
-    error: prioritiesError,
-    refreshPriorities,
-  } = usePriorities();
+  useEffect(() => {
+    priorityStore.fetchPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // States for UI interactions
   const [editingPriority, setEditingPriority] = useState(null);
@@ -37,14 +45,14 @@ const PriorityList = () => {
       setListError("");
       if (editingPriority) {
         // Update existing priority
-        await priorityService.updatePriority(editingPriority.key, priorityData);
+        await priorityStore.updatePriority(editingPriority.key, priorityData);
       } else {
         // Create new priority
-        await priorityService.createPriority(priorityData);
+        await priorityStore.createPriority(priorityData);
       }
 
       // Refresh priorities list
-      await refreshPriorities();
+      await priorityStore.refetch(true);
 
       // Reset form state
       setEditingPriority(null);
@@ -70,8 +78,7 @@ const PriorityList = () => {
     try {
       setDeletingPriority(priority.key);
       setListError("");
-      await priorityService.deletePriority(priority.key);
-      await refreshPriorities();
+      await priorityStore.deletePriority(priority.key);
     } catch (error) {
       console.error("Failed to delete priority:", error);
       setListError(
@@ -93,8 +100,12 @@ const PriorityList = () => {
   };
 
   // Function to handle form cancel
-  const handleFormCancel = () => {
+  const handleFormCancel = async () => {
     navigate(-1);
+    // Ensure list refreshes after returning from form
+    setTimeout(() => {
+      priorityStore.refetch(true);
+    }, 0);
   };
 
   // Function to toggle description visibility
@@ -103,7 +114,7 @@ const PriorityList = () => {
   };
 
   // Loading state
-  if (prioritiesLoading) {
+  if (priorityStore.loading) {
     return (
       <div className="priority-listing-container">
         <StatusBanner type="loading">Loading priorities…</StatusBanner>
@@ -112,10 +123,10 @@ const PriorityList = () => {
   }
 
   // Error state
-  if (prioritiesError) {
+  if (priorityStore.error) {
     return (
       <div className="priority-listing-container">
-        <StatusBanner type="error">{prioritiesError}</StatusBanner>
+        <StatusBanner type="error">{priorityStore.error}</StatusBanner>
       </div>
     );
   }
@@ -149,7 +160,7 @@ const PriorityList = () => {
 
       <div className="priority-table-container">
         <div className="table-header">
-          <h3>Priority List ({priorities.length})</h3>
+          <h3>Priority List ({priorityStore.visiblePriorities.length})</h3>
           <button
             className="btn-secondary toggle-description-btn"
             onClick={toggleDescription}
@@ -159,7 +170,7 @@ const PriorityList = () => {
           </button>
         </div>
 
-        {priorities.length === 0 ? (
+        {priorityStore.visiblePriorities.length === 0 ? (
           <div className="empty-state">
             <p>
               No priorities found. Create your first priority to get started!
@@ -170,81 +181,116 @@ const PriorityList = () => {
             </button>
           </div>
         ) : (
-          <div className="priority-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>Name</th>
-                  <th>Icon</th>
-                  <th>Color</th>
-                  {showDescription && <th>Description</th>}
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {priorities
-                  .sort((a, b) => a.order - b.order)
-                  .map((priority) => (
-                    <tr key={priority.key}>
-                      <td className="order-cell">
-                        <span className="order-badge">{priority.order}</span>
-                      </td>
-                      <td className="name-cell">
-                        <span
-                          className="priority-name"
-                          style={{ color: priority.color }}
-                        >
-                          {priority.name}
-                        </span>
-                      </td>
-                      <td className="icon-cell">
-                        {getIconComponent(priority.icon, priority.color)}
-                      </td>
-                      <td className="color-cell">
-                        <div className="color-preview">
-                          <div
-                            className="color-swatch"
-                            style={{ backgroundColor: priority.color }}
-                          ></div>
-                          <span className="color-code">{priority.color}</span>
-                        </div>
-                      </td>
-                      {showDescription && (
-                        <td className="description-cell">
-                          <span className="description-text">
-                            {priority.description || "No description"}
+          <>
+            <div className="priority-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Name</th>
+                    <th>Icon</th>
+                    <th>Color</th>
+                    {showDescription && <th>Description</th>}
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {priorityStore.visiblePriorities
+                    .slice(0, 10)
+                    .sort((a, b) => a.order - b.order)
+                    .map((priority) => (
+                      <tr key={priority.key}>
+                        <td className="order-cell">
+                          <span className="order-badge">{priority.order}</span>
+                        </td>
+                        <td className="name-cell">
+                          <span
+                            className="priority-name"
+                            style={{ color: priority.color }}
+                          >
+                            {priority.name}
                           </span>
                         </td>
-                      )}
-                      <td className="actions-cell">
-                        <div className="action-buttons">
-                          <button
-                            className="btn-icon btn-edit"
-                            onClick={() => handleEditClick(priority)}
-                            title="Edit priority"
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            className="btn-icon btn-delete"
-                            onClick={() => handlePriorityDelete(priority)}
-                            disabled={deletingPriority === priority.key}
-                            title="Delete priority"
-                          >
-                            <FaTrash />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
+                        <td className="icon-cell">
+                          {getIconComponent(priority.icon, priority.color)}
+                        </td>
+                        <td className="color-cell">
+                          <div className="color-preview">
+                            <div
+                              className="color-swatch"
+                              style={{ backgroundColor: priority.color }}
+                            ></div>
+                            <span className="color-code">{priority.color}</span>
+                          </div>
+                        </td>
+                        {showDescription && (
+                          <td className="description-cell">
+                            <span className="description-text">
+                              {priority.description || "No description"}
+                            </span>
+                          </td>
+                        )}
+                        <td className="actions-cell">
+                          <div className="action-buttons">
+                            <button
+                              className="btn-icon btn-edit"
+                              onClick={() => handleEditClick(priority)}
+                              title="Edit priority"
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              className="btn-icon btn-delete"
+                              onClick={() => handlePriorityDelete(priority)}
+                              disabled={deletingPriority === priority.key}
+                              title="Delete priority"
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              className="pagination-controls"
+              style={{
+                marginTop: 12,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <button
+                className="btn-secondary"
+                onClick={() => priorityStore.goToPrev()}
+                disabled={priorityStore.page <= 1}
+                title="Previous page"
+              >
+                <FaChevronLeft />
+                <span style={{ marginLeft: 6 }}>Previous</span>
+              </button>
+              <div>
+                Page {priorityStore.page} of {priorityStore.totalPages}
+              </div>
+              <button
+                className="btn-secondary"
+                onClick={() => priorityStore.goToNext()}
+                disabled={priorityStore.page >= priorityStore.totalPages}
+                title="Next page"
+              >
+                <span style={{ marginRight: 6 }}>Next</span>
+                <FaChevronRight />
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
   );
-};
+});
 
 export default PriorityList;

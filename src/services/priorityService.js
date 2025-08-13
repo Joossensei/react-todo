@@ -5,7 +5,7 @@ const PRIORITY_CACHE_KEY = "todo_priorities";
 const PRIORITY_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export const priorityService = {
-  // Get priorities with caching
+  // Get priorities with caching (simple array, used by legacy hook/components)
   getPriorities: async () => {
     try {
       // Check cache first
@@ -40,6 +40,32 @@ export const priorityService = {
     }
   },
 
+  // Get paginated priorities (used by MobX PriorityStore)
+  getPrioritiesPaged: async ({ page = 1, size = 10 } = {}) => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.PRIORITIES.LIST, {
+        params: { page, size },
+      });
+      // Expect { priorities, total, page, size, next_link, prev_link }
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch priorities (paged):", error);
+      throw error;
+    }
+  },
+
+  // Follow server-provided navigation link (next_link/prev_link)
+  getPrioritiesByLink: async (link) => {
+    if (!link) throw new Error("getPrioritiesByLink requires a link");
+    try {
+      const response = await apiClient.get(link);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch priorities via link:", error);
+      throw error;
+    }
+  },
+
   // Force refresh from API
   refreshPriorities: async () => {
     localStorage.removeItem(PRIORITY_CACHE_KEY);
@@ -69,6 +95,17 @@ export const priorityService = {
     // Invalidate cache after updating
     localStorage.removeItem(PRIORITY_CACHE_KEY);
 
+    return response.data;
+  },
+
+  // Patch priority
+  patchPriority: async (id, priorityData) => {
+    const response = await apiClient.patch(
+      API_ENDPOINTS.PRIORITIES.UPDATE(id),
+      priorityData,
+    );
+    // Invalidate cache after updating
+    localStorage.removeItem(PRIORITY_CACHE_KEY);
     return response.data;
   },
 

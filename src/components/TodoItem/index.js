@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "./TodoItem.css";
 import { getPriorityByValue } from "../../utils/priorityUtils";
 import { getPriorityIcon } from "../../constants/priorityIcons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const TodoItem = ({
   todo,

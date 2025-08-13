@@ -9,9 +9,9 @@ export const sortTodos = (todos, priorities, sortBy) => {
     case "priority-desc":
       return sortedTodos.sort((a, b) => {
         const priorityOrder = getPriorityOrder(priorities);
-        // Return the difference between the index of the priority of the second todo and the first todo
+        // Lower index means higher priority; ensure higher priority (lower index) comes first
         return (
-          priorityOrder.indexOf(b.priority) - priorityOrder.indexOf(a.priority)
+          priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
         );
       });
 
@@ -20,7 +20,7 @@ export const sortTodos = (todos, priorities, sortBy) => {
         const priorityOrder = getPriorityOrder(priorities);
         // Return the difference between the index of the priority of the second todo and the first todo
         const priorityDiff =
-          priorityOrder.indexOf(b.priority) - priorityOrder.indexOf(a.priority);
+          priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
         // If the priorities are different, return the difference
         if (priorityDiff !== 0) return priorityDiff;
         // If the priorities are the same, return the difference between the text of the second todo and the first todo
@@ -37,7 +37,7 @@ export const sortTodos = (todos, priorities, sortBy) => {
         const priorityOrder = getPriorityOrder(priorities);
         // Return the difference between the index of the priority of the second todo and the first todo
         return (
-          priorityOrder.indexOf(b.priority) - priorityOrder.indexOf(a.priority)
+          priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
         );
       });
 

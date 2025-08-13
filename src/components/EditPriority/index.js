@@ -4,10 +4,12 @@ import IconSelector from "../IconSelector";
 import { DEFAULT_PRIORITY_ICON_MAPPING } from "../../constants/priorityIcons";
 import { useNavigate, useParams } from "react-router-dom";
 import { priorityService } from "../../services/priorityService";
+import { useStores } from "../../stores/RootStoreContext";
 import { userService } from "../../services/userService";
 
 const EditPriority = () => {
   const navigate = useNavigate();
+  const { priorityStore } = useStores();
   const { id } = useParams();
   const priorityKey = id;
 
@@ -111,9 +113,9 @@ const EditPriority = () => {
           response = await priorityService.createPriority(formData);
         }
 
-        if (response.key) {
-          // Refresh priorities after a successful save
-          await priorityService.refreshPriorities();
+        if (response.key || response.success) {
+          // Ensure the list reflects latest changes when we navigate back
+          await priorityStore.refetch(true);
           navigate(-1);
         } else {
         }

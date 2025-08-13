@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // CSS
 import "./TodoList.css";
 // Components
@@ -21,16 +21,17 @@ import AddTodo from "../AddTodo";
 // Hooks
 // import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { usePriorities } from "../../hooks/usePriorities";
-import { useTodos } from "../../hooks/useTodos";
-import { todoService } from "../../services/todoService";
+import { observer } from "mobx-react-lite";
+import { useStores } from "../../stores/RootStoreContext";
 import { sortPriorities } from "../../utils/priorityUtils";
-import { useNavigate } from "react-router-dom";
-import { userService } from "../../services/userService";
+import { useNavigate } from "react-router";
+// import { userService } from "../../services/userService";
 import StatusBanner from "../StatusBanner";
 
 // Create the TodoList component
-const TodoList = (props) => {
+const TodoList = observer((props) => {
   const navigate = useNavigate();
+  const { todoStore } = useStores();
   const [actionError, setActionError] = useState("");
   // States for adding a todo
   const [isAddingTodo, setIsAddingTodo] = useState(false);
@@ -41,16 +42,24 @@ const TodoList = (props) => {
     completed: false,
   });
 
-  // States for filtering the todos (server-driven)
-  const [filter, setFilter] = useState("all");
-  const [filterPriority, setFilterPriority] = useState("");
-  const [search, setSearch] = useState("");
-
-  // State for sorting (server-driven)
-  const [sortBy, setSortBy] = useState("incomplete-priority-desc");
-
-  // States for mobile menu
+  // Local UI state for mobile menu only. All server-driven state lives in the store.
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Initial load
+  useEffect(() => {
+    todoStore.fetchPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const filter =
+    todoStore.completedFilter === true
+      ? "completed"
+      : todoStore.completedFilter === false
+        ? "incomplete"
+        : "all";
+  const filterPriority = todoStore.priorityFilter;
+  const search = todoStore.search;
+  const sortBy = todoStore.sortBy;
   // Add priorities hook here
   const {
     priorities,
@@ -58,48 +67,16 @@ const TodoList = (props) => {
     error: prioritiesError,
   } = usePriorities();
 
-  const completedFilter =
-    filter === "completed" ? true : filter === "incomplete" ? false : undefined;
+  const page = todoStore.page;
+  const totalPages = todoStore.totalPages;
 
-  const {
-    todos,
-    total,
-    page,
-    loading: todosLoading,
-    error: todosError,
-    goToNext,
-    goToPrev,
-    refetch,
-    fetchPage,
-  } = useTodos({
-    initialPage: 1,
-    size: 10,
-    sort: sortBy,
-    completed: completedFilter,
-    priority: filterPriority || undefined,
-  });
-
-  // Only apply client-side search to the current page
-  const getProcessedTodos = () => {
-    let processedTodos = Array.isArray(todos) ? [...todos] : [];
-    if (search !== "") {
-      processedTodos = processedTodos.filter((todo) =>
-        String(todo.title || "")
-          .toLowerCase()
-          .includes(search.toLowerCase()),
-      );
-    }
-    return processedTodos;
-  };
+  const processedTodos = todoStore.visibleTodos;
 
   // Function to toggle the completed status of a todo
   const toggleTodo = async (key) => {
     try {
       setActionError("");
-      const todo = todos.find((todo) => todo.key === key);
-      if (!todo) return;
-      await todoService.patchTodo(key, { completed: !todo.completed });
-      await refetch();
+      await todoStore.toggleTodo(key);
     } catch (e) {
       setActionError(
         e?.message || "Failed to update the todo. Please try again.",
@@ -111,8 +88,7 @@ const TodoList = (props) => {
   const deleteTodo = async (key) => {
     try {
       setActionError("");
-      await todoService.deleteTodo(key);
-      await refetch();
+      await todoStore.deleteTodo(key);
     } catch (e) {
       setActionError(
         e?.message || "Failed to delete the todo. Please try again.",
@@ -124,15 +100,7 @@ const TodoList = (props) => {
   const handleEditTodo = async (key, text, priority) => {
     try {
       setActionError("");
-      const todo = todos.find((todo) => todo.key === key);
-      if (!todo) return;
-      await todoService.patchTodo(key, {
-        title: formatTodoText(text),
-        priority: priority || todo.priority,
-        completed: todo.completed,
-        description: todo.description,
-      });
-      await refetch();
+      await todoStore.editTodo(key, { title: formatTodoText(text), priority });
     } catch (e) {
       setActionError(e?.message || "Failed to save changes. Please try again.");
     }
@@ -146,9 +114,11 @@ const TodoList = (props) => {
         return;
       }
       setIsAddingTodo(false);
-      newTodo.user_key = userService.getUserKey();
-      await todoService.createTodo(newTodo);
-      await refetch();
+      await todoStore.addTodo({
+        title: newTodo.title,
+        priority: newTodo.priority,
+        description: newTodo.description,
+      });
       setNewTodo({ title: "", priority: "" });
     } catch (e) {
       setActionError(e?.message || "Failed to add the todo. Please try again.");
@@ -159,9 +129,6 @@ const TodoList = (props) => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
-  const processedTodos = getProcessedTodos();
-  const totalPages = Math.max(1, Math.ceil((Number(total) || 0) / 10));
 
   if (prioritiesLoading) {
     return <StatusBanner type="loading">Loading…</StatusBanner>;
@@ -174,16 +141,16 @@ const TodoList = (props) => {
     return <StatusBanner type="error">{prioritiesError}</StatusBanner>;
   }
 
-  if (todosLoading) {
+  if (todoStore.loading) {
     return <StatusBanner type="loading">Loading…</StatusBanner>;
   }
 
-  if (todosError) {
-    console.log(todosError);
-    if (todosError === "Request failed with status code 401") {
+  if (todoStore.error) {
+    console.log(todoStore.error);
+    if (todoStore.error === "Request failed with status code 401") {
       navigate("/login");
     }
-    return <StatusBanner type="error">{todosError}</StatusBanner>;
+    return <StatusBanner type="error">{todoStore.error}</StatusBanner>;
   }
 
   return (
@@ -206,7 +173,7 @@ const TodoList = (props) => {
                   placeholder="Search todos..."
                   className="search-input"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => todoStore.setSearch(e.target.value)}
                 />
               </div>
             </div>
@@ -220,7 +187,9 @@ const TodoList = (props) => {
                     id="filterTodos"
                     className="filter-select"
                     value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
+                    onChange={(e) =>
+                      todoStore.setCompletedFilter(e.target.value)
+                    }
                   >
                     <option value="all">All Status</option>
                     <option value="completed">Completed</option>
@@ -236,7 +205,9 @@ const TodoList = (props) => {
                     id="filterPriority"
                     className="filter-select"
                     value={filterPriority}
-                    onChange={(e) => setFilterPriority(e.target.value)}
+                    onChange={(e) =>
+                      todoStore.setPriorityFilter(e.target.value)
+                    }
                     disabled={prioritiesLoading}
                   >
                     <option value="">All Priorities</option>
@@ -259,11 +230,7 @@ const TodoList = (props) => {
                     id="sortTodos"
                     className="sort-select"
                     value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value);
-                      // Reset to first page on sort change
-                      fetchPage(1);
-                    }}
+                    onChange={(e) => todoStore.setSort(e.target.value)}
                   >
                     {getSortOptions().map((option) => (
                       <option key={option.value} value={option.value}>
@@ -286,7 +253,7 @@ const TodoList = (props) => {
                 placeholder="Search todos..."
                 className="search-input"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => todoStore.setSearch(e.target.value)}
               />
             </div>
             <button className="hamburger-menu" onClick={toggleMobileMenu}>
@@ -303,7 +270,9 @@ const TodoList = (props) => {
                   <select
                     className="mobile-filter-select"
                     value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
+                    onChange={(e) =>
+                      todoStore.setCompletedFilter(e.target.value)
+                    }
                   >
                     <option value="all">All Status</option>
                     <option value="completed">Completed</option>
@@ -318,7 +287,9 @@ const TodoList = (props) => {
                   <select
                     className="mobile-filter-select"
                     value={filterPriority}
-                    onChange={(e) => setFilterPriority(e.target.value)}
+                    onChange={(e) =>
+                      todoStore.setPriorityFilter(e.target.value)
+                    }
                     disabled={prioritiesLoading}
                   >
                     <option value="">All Priorities</option>
@@ -337,7 +308,7 @@ const TodoList = (props) => {
                   <select
                     className="mobile-sort-select"
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(e) => todoStore.setSort(e.target.value)}
                   >
                     {getSortOptions().map((option) => (
                       <option key={option.value} value={option.value}>
@@ -366,7 +337,7 @@ const TodoList = (props) => {
               <div className="compact-pager">
                 <button
                   className="pager-btn"
-                  onClick={goToPrev}
+                  onClick={() => todoStore.goToPrev()}
                   disabled={page <= 1}
                   title="Previous page"
                 >
@@ -377,7 +348,7 @@ const TodoList = (props) => {
                 </span>
                 <button
                   className="pager-btn"
-                  onClick={goToNext}
+                  onClick={() => todoStore.goToNext()}
                   disabled={page >= totalPages}
                   title="Next page"
                 >
@@ -417,7 +388,7 @@ const TodoList = (props) => {
             >
               <button
                 className="btn-secondary"
-                onClick={goToPrev}
+                onClick={() => todoStore.goToPrev()}
                 disabled={page <= 1}
               >
                 Previous
@@ -427,7 +398,7 @@ const TodoList = (props) => {
               </div>
               <button
                 className="btn-secondary"
-                onClick={goToNext}
+                onClick={() => todoStore.goToNext()}
                 disabled={page >= totalPages}
               >
                 Next
@@ -450,6 +421,6 @@ const TodoList = (props) => {
       </div>
     </div>
   );
-};
+});
 
 export default TodoList;

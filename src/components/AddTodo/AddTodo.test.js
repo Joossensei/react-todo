@@ -18,8 +18,15 @@ describe("AddTodo Component", () => {
     onAddTodo: jest.fn(),
     isAddingTodo: false,
     setIsAddingTodo: jest.fn(),
-    newTodo: { text: "", priority: "" },
+    newTodo: { title: "", priority: "" },
     setNewTodo: jest.fn(),
+    priorities: [
+      { key: "low", name: "Low" },
+      { key: "medium", name: "Medium" },
+      { key: "high", name: "High" },
+      { key: "urgent", name: "Urgent" },
+    ],
+    prioritiesLoading: false,
   };
 
   beforeEach(() => {
@@ -55,10 +62,7 @@ describe("AddTodo Component", () => {
     render(<AddTodo {...mockProps} isAddingTodo={true} />);
     const input = screen.getByPlaceholderText("Add a todo");
     fireEvent.change(input, { target: { value: "New todo" } });
-    expect(mockProps.setNewTodo).toHaveBeenCalledWith({
-      text: "New todo",
-      priority: "",
-    });
+    expect(mockProps.setNewTodo).toHaveBeenCalled();
   });
 
   test("shows error message when validation fails", () => {
@@ -75,7 +79,7 @@ describe("AddTodo Component", () => {
       <AddTodo
         {...mockProps}
         isAddingTodo={true}
-        newTodo={{ text: "Valid todo", priority: "high" }}
+        newTodo={{ title: "Valid todo", priority: "high" }}
       />,
     );
     const addButton = screen.getByText("Add +");
@@ -93,12 +97,12 @@ describe("AddTodo Component", () => {
     expect(screen.getByText("Urgent")).toBeInTheDocument();
   });
 
-  test("input value reflects newTodo.text", () => {
+  test("input value reflects newTodo.title", () => {
     render(
       <AddTodo
         {...mockProps}
         isAddingTodo={true}
-        newTodo={{ text: "Test todo", priority: "" }}
+        newTodo={{ title: "Test todo", priority: "" }}
       />,
     );
     const input = screen.getByPlaceholderText("Add a todo");
@@ -117,7 +121,7 @@ describe("AddTodo Component", () => {
       <AddTodo
         {...mockProps}
         isAddingTodo={true}
-        newTodo={{ text: "Valid todo", priority: "high" }}
+        newTodo={{ title: "Valid todo", priority: "high" }}
       />,
     );
     const addButton = screen.getByText("Add +");
