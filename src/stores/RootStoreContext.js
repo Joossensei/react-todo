@@ -1,6 +1,6 @@
 import React from "react";
-import { todoStore } from "./TodoStore";
-import { priorityStore } from "./PriorityStore";
+import { todoStore } from "../features/todos/stores/TodoStore";
+import { priorityStore } from "../features/priorities/stores/PriorityStore";
 
 export const RootStoreContext = React.createContext({
   todoStore,
