@@ -1,6 +1,6 @@
 // src/services/todoService.js
-import apiClient from "./apiClient";
-import { API_ENDPOINTS } from "../constants/apiEndpoints";
+import apiClient from "../../../services/apiClient";
+import { API_ENDPOINTS } from "../../../constants/apiEndpoints";
 
 export const todoService = {
   // Get paginated todos with server-side sort/filter

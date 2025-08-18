@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import "./User.css";
-import { userService } from "../../services/userService";
-import StatusBanner from "./StatusBanner";
+import "./styles/User.css";
+import { userService } from "../services/userService";
+import StatusBanner from "../../../components/ui/StatusBanner";
+import { userStore } from "../stores/UserStore";
+import { userListStore } from "../stores/UserListStore";
 import {
   FaUser,
   FaEnvelope,
@@ -17,10 +19,21 @@ import {
 } from "react-icons/fa";
 
 const User = () => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+    fetchUser: fetchCurrentUser,
+    updatePassword,
+    logout,
+    updateUser,
+  } = userStore;
+  const {
+    users: usersList,
+    loading: usersListLoading,
+    error: usersListError,
+    fetchUsers: fetchUsersList,
+  } = userListStore;
 
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
@@ -63,44 +76,24 @@ const User = () => {
   }
 
   useEffect(() => {
-    let mounted = true;
     async function load() {
-      setLoading(true);
-      setError("");
-      try {
-        const [me, all] = await Promise.all([
-          userService.getCurrentUser(),
-          userService.getUsers(),
-        ]);
-        if (!mounted) return;
-        setCurrentUser(me);
-        setUsers(Array.isArray(all) ? all : []);
-      } catch (e) {
-        if (!mounted) return;
-        setError(e?.message || "Failed to load user data");
-      } finally {
-        if (mounted) setLoading(false);
-      }
+      await fetchCurrentUser();
+      await fetchUsersList();
     }
     load();
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   const otherUsers = useMemo(() => {
-    if (!currentUser || !Array.isArray(users)) return [];
-    return users.filter((u) => {
-      const uid = u?.id ?? u?.key ?? u?.username;
-      const my = currentUser?.id ?? currentUser?.key ?? currentUser?.username;
-      return uid !== my;
+    if (!user || !usersList) return [];
+    return usersList.filter((u) => {
+      return u.key !== user.key;
     });
-  }, [users, currentUser]);
+  }, [usersList, user]);
 
   const nameValue = useMemo(() => {
-    if (!currentUser) return "";
-    return currentUser?.name || "";
-  }, [currentUser]);
+    if (!user) return "";
+    return user.name || "";
+  }, [user]);
 
   const isValidEmail = (value) => {
     const email = String(value || "").trim();
@@ -153,7 +146,7 @@ const User = () => {
   }
 
   async function handleSaveInline(field, value) {
-    if (!currentUser) return;
+    if (!user) return;
     const trimmed = String(value || "").trim();
     if (savingInline) return;
     if (!trimmed) {
@@ -165,7 +158,7 @@ const User = () => {
       showToast("Enter a valid email", "error");
       return;
     }
-    const currentVal = String(currentUser?.[field] || "").trim();
+    const currentVal = String(user?.[field] || "").trim();
     if (trimmed === currentVal) {
       setEditingField(null);
       return;
@@ -173,15 +166,15 @@ const User = () => {
     try {
       setSavingInline(true);
       const updates = { [field]: trimmed };
-      const updated = await userService.updateUser(updates);
-      setCurrentUser(updated);
+      await updateUser(updates);
+      await fetchCurrentUser();
       setEditingField(null);
       showToast("Saved", "success");
     } catch (e) {
       // Surface error in banner
-      setError(
-        e?.response?.data?.detail || e?.message || "Failed to update user",
-      );
+      // setUserError(
+      //   e?.response?.data?.detail || e?.message || "Failed to update user",
+      // );
       setEditingField(null);
       showToast("Failed to save", "error");
     } finally {
@@ -208,21 +201,19 @@ const User = () => {
         </button>
 
         <div
-          className={`user-status ${currentUser?.is_active ? "active" : "inactive"}`}
+          className={`user-status ${user?.is_active ? "active" : "inactive"}`}
         >
-          <span
-            className={`status-dot ${currentUser?.is_active ? "on" : "off"}`}
-          />
-          {currentUser?.is_active ? "Active" : "Inactive"}
+          <span className={`status-dot ${user?.is_active ? "on" : "off"}`} />
+          {user?.is_active ? "Active" : "Inactive"}
         </div>
 
         <h1 className="user-title">Your account</h1>
         <p className="user-subtitle">Manage your profile and security</p>
 
-        {loading ? (
+        {userLoading ? (
           <StatusBanner type="loading">Loading your data…</StatusBanner>
-        ) : error ? (
-          <StatusBanner type="error">{error}</StatusBanner>
+        ) : userError ? (
+          <StatusBanner type="error">{userError}</StatusBanner>
         ) : (
           <>
             <div className="user-info">
@@ -231,9 +222,7 @@ const User = () => {
                   <FaUser className="label-icon" /> Username
                 </div>
                 <div className="info-value">
-                  <span className="inline-text">
-                    {currentUser?.username || "—"}
-                  </span>
+                  <span className="inline-text">{user?.username || "—"}</span>
                   <span
                     className="field-trailing-icon locked"
                     aria-hidden="true"
@@ -295,7 +284,7 @@ const User = () => {
                   className={`info-value ${editingField === "email" ? "editing" : ""}`}
                   onDoubleClick={() => {
                     setEditingField("email");
-                    setEditValue(currentUser?.email || "");
+                    setEditValue(user?.email || "");
                     setTimeout(() => inputRef.current?.focus(), 0);
                   }}
                 >
@@ -319,9 +308,7 @@ const User = () => {
                       }}
                     />
                   ) : (
-                    <span className="inline-text">
-                      {currentUser?.email || "—"}
-                    </span>
+                    <span className="inline-text">{user?.email || "—"}</span>
                   )}
                   {editingField !== "email" && (
                     <span
@@ -340,19 +327,19 @@ const User = () => {
                 </div>
                 <div className="info-value">
                   <span className="inline-text">
-                    {formatDate(currentUser?.created_at)}
+                    {formatDate(user?.created_at)}
                   </span>
                 </div>
               </div>
 
-              {currentUser?.updated_at && (
+              {user?.updated_at && (
                 <div className="info-row">
                   <div className="info-label with-icon">
                     <FaClock className="label-icon" /> Updated
                   </div>
                   <div className="info-value">
                     <span className="inline-text">
-                      {formatDate(currentUser?.updated_at)}
+                      {formatDate(user?.updated_at)}
                     </span>
                   </div>
                 </div>
@@ -524,38 +511,46 @@ const User = () => {
 
             <div className="user-list">
               <h2 className="section-title">Other users</h2>
-              {otherUsers.length === 0 ? (
-                <p className="muted">No other users found.</p>
+              {usersListLoading ? (
+                <StatusBanner type="loading">Loading users…</StatusBanner>
+              ) : usersListError ? (
+                <StatusBanner type="error">{usersListError}</StatusBanner>
               ) : (
-                <ul className="users">
-                  {otherUsers.map((u) => (
-                    <li
-                      key={u.id ?? u.key ?? u.username}
-                      className="user-list-item"
-                    >
-                      <span className="user-badge">
-                        {(u.username || "?").slice(0, 2).toUpperCase()}
-                      </span>
-                      <div className="user-list-text">
-                        <div className="user-list-name">
-                          {u.username || "Unknown"}
-                        </div>
-                        <div className="user-list-sub">
-                          {u.email || (u.id ?? u.key)}
-                        </div>
-                      </div>
-                      <div
-                        className={`user-status user-list-status ${u?.is_active ? "active" : "inactive"}`}
-                        title={u?.is_active ? "Active" : "Inactive"}
-                      >
-                        <span
-                          className={`status-dot ${u?.is_active ? "on" : "off"}`}
-                        />
-                        {u?.is_active ? "Active" : "Inactive"}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  {otherUsers.length === 0 ? (
+                    <p className="muted">No other users found.</p>
+                  ) : (
+                    <ul className="users">
+                      {otherUsers.map((u) => (
+                        <li
+                          key={u.id ?? u.key ?? u.username}
+                          className="user-list-item"
+                        >
+                          <span className="user-badge">
+                            {(u.username || "?").slice(0, 2).toUpperCase()}
+                          </span>
+                          <div className="user-list-text">
+                            <div className="user-list-name">
+                              {u.username || "Unknown"}
+                            </div>
+                            <div className="user-list-sub">
+                              {u.email || (u.id ?? u.key)}
+                            </div>
+                          </div>
+                          <div
+                            className={`user-status user-list-status ${u?.is_active ? "active" : "inactive"}`}
+                            title={u?.is_active ? "Active" : "Inactive"}
+                          >
+                            <span
+                              className={`status-dot ${u?.is_active ? "on" : "off"}`}
+                            />
+                            {u?.is_active ? "Active" : "Inactive"}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
               )}
             </div>
           </>

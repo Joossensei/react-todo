@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./AddTodo.css";
-import { validateTodo } from "../../users/utils/todoUtils";
+import "./styles/AddTodo.css";
+import { validateTodo } from "../utils/todoUtils";
 
 const AddTodo = ({
   onAddTodo,

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import "./PriorityForm.css";
-import IconSelector from "../IconSelector/IconSelector";
-import { DEFAULT_PRIORITY_ICON_MAPPING } from "../../constants/priorityIcons";
-import { useNavigate, useParams } from "react-router-dom";
-import { priorityService } from "../../services/priorityService";
-import { useStores } from "../../stores/RootStoreContext";
-import { userService } from "../../services/userService";
+import "./styles/EditPriority.css";
+import IconSelector from "./../components/IconSelector";
+import { DEFAULT_PRIORITY_ICON_MAPPING } from "../../../constants/priorityIcons";
+import { useNavigate, useParams } from "react-router";
+import { priorityService } from "../services/priorityService";
+import { useStores } from "../../../stores/RootStoreContext";
+import { userService } from "../../users/services/userService";
 
 const EditPriority = () => {
   const navigate = useNavigate();

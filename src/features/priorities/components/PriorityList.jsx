@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 // CSS
-import "./PriorityListing.css";
+import "./styles/PriorityListing.css";
 // Hooks
 import { observer } from "mobx-react-lite";
-import { useStores } from "../../stores/RootStoreContext";
-// Services
-import { priorityService } from "../../services/priorityService";
+import { useStores } from "../../../stores/RootStoreContext";
 // Components
-import EditPriority from "../EditPriority/EditPriority";
+import EditPriority from "./EditPriority";
 // Icons
-import { getIconComponent } from "../../constants/priorityIcons";
+import { getIconComponent } from "../../../constants/priorityIcons";
 import {
   FaEdit,
   FaTrash,
@@ -19,8 +17,8 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import StatusBanner from "../StatusBanner";
+import { useNavigate } from "react-router";
+import StatusBanner from "../../../components/ui/StatusBanner";
 
 const PriorityList = observer(() => {
   const navigate = useNavigate();

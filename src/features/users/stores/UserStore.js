@@ -5,37 +5,125 @@ configure({ enforceActions: "always" });
 
 export class UserStore {
   user = null;
+  loading = false;
+  error = null;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
   async fetchUser() {
-    const user = await userService.getCurrentUser();
-    this.user = user;
+    this.loading = true;
+    this.error = null;
+    try {
+      const user = await userService.getCurrentUser();
+      runInAction(() => {
+        this.user = user;
+        this.loading = false;
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.response?.data?.detail || e?.message || "Failed to fetch user";
+        this.loading = false;
+      });
+    }
   }
 
   async updatePassword(passwordData) {
-    const user = await userService.updatePassword(passwordData);
-    this.user = user;
+    this.loading = true;
+    this.error = null;
+    try {
+      const user = await userService.updatePassword(passwordData);
+      runInAction(() => {
+        this.user = user;
+        this.loading = false;
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.response?.data?.detail || e?.message || "Failed to update password";
+        this.loading = false;
+      });
+      throw e;
+    }
   }
 
   logout() {
     userService.logout();
+    runInAction(() => {
+      this.user = null;
+    });
+  }
+
+  async login(loginData) {
+    this.loading = true;
+    this.error = null;
+    try {
+      const user = await userService.login(loginData);
+      runInAction(() => {
+        this.user = user;
+        this.loading = false;
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.response?.data?.detail || e?.message || "Failed to login";
+        this.loading = false;
+      });
+      throw e;
+    }
   }
 
   async updateUser(userData) {
-    const user = await userService.updateUser(userData);
-    this.user = user;
+    this.loading = true;
+    this.error = null;
+    try {
+      const user = await userService.updateUser(userData);
+      runInAction(() => {
+        this.user = user;
+        this.loading = false;
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.response?.data?.detail || e?.message || "Failed to update user";
+        this.loading = false;
+      });
+      throw e;
+    }
   }
 
   async deleteUser() {
-    await userService.deleteUser();
+    this.loading = true;
+    this.error = null;
+    try {
+      await userService.deleteUser();
+      runInAction(() => {
+        this.user = null;
+        this.loading = false;
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.response?.data?.detail || e?.message || "Failed to delete user";
+        this.loading = false;
+      });
+      throw e;
+    }
   }
 
   async createUser(userData) {
-    const user = await userService.createUser(userData);
-    this.user = user;
+    this.loading = true;
+    this.error = null;
+    try {
+      const user = await userService.createUser(userData);
+      runInAction(() => {
+        this.user = user;
+        this.loading = false;
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.response?.data?.detail || e?.message || "Failed to create user";
+        this.loading = false;
+      });
+      throw e;
+    }
   }
 }
 

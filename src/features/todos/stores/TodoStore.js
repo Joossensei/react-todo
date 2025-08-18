@@ -1,6 +1,6 @@
 import { makeAutoObservable, configure, runInAction } from "mobx";
 import { todoService } from "../services/todoService";
-import { userService } from "../services/userService";
+import { userService } from "../../users/services/userService";
 
 configure({ enforceActions: "always" });
 

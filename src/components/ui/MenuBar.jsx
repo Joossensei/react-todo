@@ -1,9 +1,9 @@
 import React from "react";
-import "./MenuBar.css";
+import "./styles/MenuBar.css";
 import { Link, useLocation } from "react-router";
 import { FaUser } from "react-icons/fa";
 import { BsIncognito } from "react-icons/bs";
-import { userService } from "../../services/userService";
+import { userService } from "../../features/users/services/userService";
 
 const MenuBar = () => {
   const location = useLocation();

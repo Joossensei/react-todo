@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./EditTodo.css";
+import "./styles/EditTodo.css";
 import { usePriorities } from "../../priorities/hooks/usePriorities";
-import { todoService } from "../../../services/todoService";
+import { todoService } from "../services/todoService";
 import { getPriorityIcon } from "../../../constants/priorityIcons";
-import { useParams, useNavigate } from "react-router-dom";
-import StatusBanner from "../../../../components/StatusBanner";
+import { useParams, useNavigate } from "react-router";
+import StatusBanner from "../../../components/ui/StatusBanner";
+import { todoStore } from "../stores/TodoStore";
 
 const EditTodo = () => {
   const { id } = useParams();
@@ -84,7 +85,7 @@ const EditTodo = () => {
         completed,
       });
       // Refresh todos
-      await todoService.refreshTodos();
+      await todoStore.refetch(true);
       // Go back to list; TodoList will refetch on mount
       handleBack();
     } catch (err) {
@@ -102,7 +103,7 @@ const EditTodo = () => {
     );
   }
 
-  if (error) {
+  if (error || prioritiesError) {
     return (
       <div className="edit-todo-page">
         <div className="edit-todo-header-col">
@@ -111,7 +112,7 @@ const EditTodo = () => {
           </button>
           <h2 className="page-title">Edit Todo</h2>
         </div>
-        <StatusBanner type="error">{error}</StatusBanner>
+        <StatusBanner type="error">{error || prioritiesError}</StatusBanner>
       </div>
     );
   }

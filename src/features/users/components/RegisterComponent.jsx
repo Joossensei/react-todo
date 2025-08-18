@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./Register.css";
-import StatusBanner from "../StatusBanner/StatusBanner";
-import { userService } from "../../services/userService";
+import { Link, useNavigate } from "react-router";
+import "./styles/Register.css";
+import StatusBanner from "../../../components/ui/StatusBanner";
+import { userService } from "../services/userService";
 import {
   FaUser,
   FaEnvelope,

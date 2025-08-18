@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 // CSS
-import "./TodoList.css";
+import "./styles/TodoList.css";
 // Components
-import TodoItem from "./TodoList";
+import TodoItem from "./TodoItem";
 // Utils
-import { formatTodoText, validateTodo } from "../../utils/todoUtils";
-import { getSortOptions } from "../../utils/sortingUtils";
+import {
+  formatTodoText,
+  validateTodo,
+  getSortOptions,
+} from "../utils/todoUtils";
 // Icons
 import {
   FaSearch,
@@ -20,13 +23,13 @@ import {
 import AddTodo from "./AddTodo";
 // Hooks
 // import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { usePriorities } from "../../hooks/usePriorities";
+import { usePriorities } from "../../priorities/hooks/usePriorities";
 import { observer } from "mobx-react-lite";
-import { useStores } from "../../stores/RootStoreContext";
-import { sortPriorities } from "../../utils/priorityUtils";
+import { useStores } from "../../../stores/RootStoreContext";
+import { sortPriorities } from "../../priorities/utils/priorityUtils";
 import { useNavigate } from "react-router";
 // import { userService } from "../../services/userService";
-import StatusBanner from "../StatusBanner";
+import StatusBanner from "../../../components/ui/StatusBanner";
 
 // Create the TodoList component
 const TodoList = observer((props) => {

@@ -1,12 +1,12 @@
 import React from "react";
 import { Routes, Route, Outlet, Navigate } from "react-router";
 import "./App.css";
-import MenuBar from "./components/MenuBar";
+import MenuBar from "./components/ui/MenuBar";
 import { FaGithub, FaCode } from "react-icons/fa";
-import { TodoList, EditTodo } from "features/todos";
-import { PriorityList, EditPriority } from "features/priorities";
-import { LoginComponent, RegisterComponent, User } from "features/users";
-import { userService } from "services/userService";
+import { TodoList, EditTodo } from "./features/todos";
+import { PriorityList, EditPriority } from "./features/priorities";
+import { LoginComponent, RegisterComponent, User } from "./features/users";
+import { userService } from "./features/users/services/userService";
 
 userService.installInterceptors({ loginPath: "/login" });
 

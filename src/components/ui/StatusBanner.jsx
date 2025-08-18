@@ -1,5 +1,5 @@
 import React from "react";
-import "./StatusBanner.css";
+import "./styles/StatusBanner.css";
 import {
   FaInfoCircle,
   FaExclamationCircle,

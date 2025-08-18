@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import "./IconSelector.css";
+import "./styles/IconSelector.css";
 import {
   PRIORITY_ICONS,
   getIconsByCategory,
   getIconCategories,
   getIconComponent,
   getIconName,
-} from "../../constants/priorityIcons";
+} from "../../../constants/priorityIcons";
 
 const IconSelector = ({
   selectedIcon,
@@ -74,7 +74,9 @@ const IconSelector = ({
             : "Select an icon"
         }
       >
-        {SelectedIconComponent ?? <span className="no-icon-placeholder">?</span>}
+        {SelectedIconComponent ?? (
+          <span className="no-icon-placeholder">?</span>
+        )}
         <span className="dropdown-arrow">{isOpen ? "▲" : "▼"}</span>
       </button>
 

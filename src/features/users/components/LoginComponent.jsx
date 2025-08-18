@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "./Login.css";
-import StatusBanner from "../StatusBanner/StatusBanner";
-import { userService } from "../../services/userService";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router";
+import "./styles/Login.css";
+import StatusBanner from "../../../components/ui/StatusBanner";
+import { userService } from "../services/userService";
+import { useNavigate } from "react-router";
 
 const LoginComponent = () => {
   const [username, setUsername] = useState("");
