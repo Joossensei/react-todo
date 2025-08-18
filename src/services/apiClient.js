@@ -12,9 +12,18 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    if (config.url.includes("/api/v1/")) {
+      config.url = config.url.replace("/api/v1/", "/");
+    }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    console.error("API Request Error:", error);
+    if (error.response) {
+      console.error("Response Data:", error.response.data);
+    }
+    return Promise.reject(error);
+  },
 );
 
 // Response interceptor for error handling

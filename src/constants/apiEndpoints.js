@@ -1,7 +1,7 @@
 export const API_ENDPOINTS = {
   TODOS: {
     LIST: "/todos",
-    CREATE: "/todo",
+    CREATE: "/todos",
     GET: (key) => `/todo/${key}`,
     UPDATE: (key) => `/todo/${key}`,
     DELETE: (key) => `/todo/${key}`,
@@ -9,7 +9,7 @@ export const API_ENDPOINTS = {
   },
   PRIORITIES: {
     LIST: "/priorities",
-    CREATE: "/priority",
+    CREATE: "/priorities",
     GET: (key) => `/priority/${key}`,
     UPDATE: (key) => `/priority/${key}`,
     DELETE: (key) => `/priority/${key}`,
@@ -17,7 +17,7 @@ export const API_ENDPOINTS = {
   },
   USER: {
     LIST: "/users",
-    CREATE: "/user",
+    CREATE: "/users",
     UPDATE: (key) => `/user/${key}`,
     UPDATE_PASSWORD: (key) => `/user/${key}/password`,
     DELETE: (key) => `/user/${key}`,

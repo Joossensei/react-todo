@@ -66,6 +66,11 @@ export class TodoStore {
     this.fetchPage(1);
   }
 
+  invalidateCache() {
+    this.cache.clear();
+    this.fetchPage(1);
+  }
+
   async fetchPage(targetPage = 1, force = false) {
     console.log("fetching page", targetPage);
     try {
@@ -81,6 +86,7 @@ export class TodoStore {
       if (this.cache.has(cacheKey) && !force) {
         const data = this.cache.get(cacheKey);
         this._applyPageData(data);
+        console.log("cache hit", data);
       } else {
         const data = await todoService.getTodos({
           page: targetPage,
@@ -89,6 +95,7 @@ export class TodoStore {
           completed: this.completedFilter,
           priority: this.priorityFilter || undefined,
         });
+        console.log("cache miss", data);
         runInAction(() => {
           this.cache.set(cacheKey, data);
           this._applyPageData(data);
@@ -151,6 +158,7 @@ export class TodoStore {
   }
 
   goToNext() {
+    console.log("going to next", this.nextLink);
     if (!this.nextLink) return;
     const parsed = new URL(this.nextLink, window.location.origin);
     const nextPage = Number(parsed.searchParams.get("page")) || this.page + 1;
@@ -177,6 +185,7 @@ export class TodoStore {
       if (!todo) return;
       console.log("toggling todo", key, todo);
       await todoService.patchTodo(key, { completed: !todo.completed });
+      this.invalidateCache();
       console.log("refetching");
       await this.refetch(true);
     } catch (e) {
@@ -190,6 +199,7 @@ export class TodoStore {
     try {
       this.error = null;
       await todoService.deleteTodo(key);
+      this.invalidateCache();
       await this.refetch(true);
     } catch (e) {
       runInAction(() => {
@@ -209,6 +219,7 @@ export class TodoStore {
         completed: current.completed,
         description: description ?? current.description,
       });
+      this.invalidateCache();
       await this.refetch(true);
     } catch (e) {
       runInAction(() => {
@@ -232,6 +243,7 @@ export class TodoStore {
         throw new Error("Todo and priority are required");
       }
       await todoService.createTodo(payload);
+      this.invalidateCache();
       await this.refetch(true);
     } catch (e) {
       runInAction(() => {
@@ -241,6 +253,13 @@ export class TodoStore {
   }
 
   _applyPageData({ todos, total, page, next_link, prev_link }) {
+    console.log("applying page data", {
+      todos,
+      total,
+      page,
+      next_link,
+      prev_link,
+    });
     this.todos = Array.isArray(todos) ? todos : [];
     this.total = Number(total) || 0;
     this.page = Number(page) || 1;
