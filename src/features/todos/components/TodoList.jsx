@@ -252,6 +252,9 @@ const TodoList = observer((props) => {
               </div>
 
               <div className="filter-container" ref={priorityFilterDropdownRef}>
+                <div className="priority-filter-icon">
+                  <FaFlag />
+                </div>
                 <div className="priority-filter-field">
                   <div
                     id="filterPriority"
@@ -259,13 +262,13 @@ const TodoList = observer((props) => {
                     style={{
                       backgroundColor:
                         getCurrentPriorityFilter(filterPriority)?.color ||
-                        "#e5e7eb",
+                        "var(--primary-bg)",
                       borderRadius: isPriorityFilterDropdownOpen
                         ? "6px 6px 0 0"
                         : "6px",
                       border: isPriorityFilterDropdownOpen
-                        ? "1px 1px 0 1px solid #e5e7eb"
-                        : "1px solid #e5e7eb",
+                        ? "2px 2px 0 2px solid var(--border-color)"
+                        : "2px solid var(--border-color)",
                       color:
                         getCurrentPriorityFilter(filterPriority)?.color.charAt(
                           0,
@@ -273,8 +276,8 @@ const TodoList = observer((props) => {
                         getCurrentPriorityFilter(filterPriority)?.color.charAt(
                           1,
                         ) === "0"
-                          ? "white"
-                          : "black",
+                          ? "var(--text-primary)"
+                          : "var(--text-primary)",
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -289,7 +292,7 @@ const TodoList = observer((props) => {
                           getCurrentPriorityFilter(filterPriority),
                         )
                       ) : (
-                        <FaFlag />
+                        <div></div>
                       )}
                     </div>
                     <span className="priority-filter-label">

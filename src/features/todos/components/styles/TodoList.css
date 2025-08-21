@@ -1,5 +1,5 @@
 .todo-list {
-  background-color: #f0f0f0;
+  background-color: var(--secondary-bg);
 }
 
 /* Desktop Header Styles */
@@ -7,10 +7,11 @@
   flex-direction: column;
   gap: 15px;
   padding: 15px;
-  background-color: #ffffff;
+  background-color: var(--primary-bg);
   border-radius: 8px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  border: 1px solid var(--border-color);
 }
 
 .header-row {
@@ -56,7 +57,7 @@
 .custom-select::after {
   border-left: var(--size) solid transparent;
   border-right: var(--size) solid transparent;
-  border-top: var(--size) solid #6b7280;
+  border-top: var(--size) solid var(--text-secondary);
   top: 45%;
 }
 
@@ -65,7 +66,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 16px;
 }
 
@@ -73,16 +74,18 @@
   box-sizing: border-box;
   width: 100%;
   padding: 12px 12px 12px 40px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   transition: border-color 0.2s ease;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 /* Filter Container */
@@ -97,17 +100,18 @@
 .filter-icon,
 .priority-icon,
 .sort-icon {
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 16px;
 }
 
 .filter-select,
 .sort-select {
   padding: 10px 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
-  background-color: #ffffff;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
   cursor: pointer;
   transition: border-color 0.2s ease;
   min-width: 225px;
@@ -116,8 +120,8 @@
 .filter-select:focus,
 .sort-select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 /* Mobile Header Styles */
@@ -125,17 +129,18 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #ffffff;
+  background-color: var(--primary-bg);
   border-radius: 8px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  border: 1px solid var(--border-color);
 }
 
 .hamburger-menu {
   background: none;
   border: none;
   font-size: 20px;
-  color: #6b7280;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
@@ -143,7 +148,7 @@
 }
 
 .hamburger-menu:hover {
-  background-color: #f3f4f6;
+  background-color: var(--secondary-bg);
 }
 
 /* Compact pager (beneath Add Todo) */
@@ -160,7 +165,7 @@
 }
 
 .pager-label {
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
@@ -170,9 +175,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #374151;
+  border: 1px solid var(--border-color);
+  background: var(--primary-bg);
+  color: var(--text-primary);
   border-radius: 9999px;
   cursor: pointer;
   transition:
@@ -182,7 +187,7 @@
 }
 
 .pager-btn:hover:not(:disabled) {
-  background: #f9fafb;
+  background: var(--secondary-bg);
 }
 
 .pager-btn:disabled {
@@ -192,7 +197,7 @@
 
 /* Mobile Menu */
 .mobile-menu {
-  background-color: #ffffff;
+  background-color: var(--primary-bg);
   border-radius: 8px;
   margin-bottom: 20px;
   padding: 20px;
@@ -215,6 +220,7 @@
   border-radius: 6px;
   cursor: pointer;
   min-width: 225px;
+  font-size: 14px;
   box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
@@ -226,10 +232,7 @@
 
 .priority-filter-icon {
   display: inline-flex;
-}
-
-.priority-filter-label {
-  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .priority-filter-dropdown {

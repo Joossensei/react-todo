@@ -7,15 +7,16 @@
 
 /* Card look aligned with .container content sections */
 .login-card {
-  background: #ffffff;
+  background: var(--primary-bg);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px var(--shadow-color);
   padding: 24px;
+  border: 1px solid var(--border-color);
 }
 
 .login-title {
   margin: 0 0 4px 0;
-  color: #111827;
+  color: var(--text-primary);
   font-size: 24px;
   font-weight: 700;
   text-align: left;
@@ -23,7 +24,7 @@
 
 .login-subtitle {
   margin: 0 0 16px 0;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 14px;
   text-align: left;
 }
@@ -46,10 +47,11 @@
   font-weight: 600;
   margin: 0;
   text-align: left;
+  color: var(--text-primary);
 }
 
 .text-input {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 10px;
   font-size: 14px;
@@ -58,12 +60,14 @@
     border-color 0.2s ease,
     box-shadow 0.2s ease;
   width: 100%;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
 }
 
 .text-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .login-error {
@@ -92,23 +96,23 @@
   align-items: center;
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-color);
 }
 
 .auth-text {
   margin: 0;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .auth-link {
-  color: #667eea;
+  color: var(--accent-color);
   font-weight: 600;
   text-decoration: none;
 }
 
 .auth-link:hover {
-  color: #764ba2;
+  color: var(--accent-hover);
   text-decoration: underline;
 }
 

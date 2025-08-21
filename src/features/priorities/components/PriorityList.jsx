@@ -28,10 +28,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -71,6 +69,7 @@ const SortablePriorityRow = ({
         <span className="order-badge">{priority.order}</span>
       </td>
       <td className="name-cell">
+        {/* If the priority color is too dark for the background, use a lighter color */}
         <span className="priority-name" style={{ color: priority.color }}>
           {priority.name}
         </span>

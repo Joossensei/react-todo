@@ -10,10 +10,10 @@
 .add-todo-btn {
   box-sizing: border-box;
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   color: white;
-  background-color: #007bff;
+  background-color: var(--accent-color);
   cursor: pointer;
   width: 100%;
 }
@@ -40,10 +40,11 @@
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color);
   border-radius: 6px 0 0 6px;
   font-size: 16px;
-  background-color: #ffffff;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
   border-right: none;
   margin-left: 20px;
 }
@@ -51,13 +52,13 @@
 .add-todo-form-btn {
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color);
   border-radius: 0 6px 6px 0;
   font-size: 16px;
-  background-color: #ffffff;
+  background-color: var(--primary-bg);
   border-left: none;
   color: white;
-  background-color: #007bff;
+  background-color: var(--accent-color);
   cursor: pointer;
   width: 15%;
 }
@@ -99,12 +100,15 @@
   cursor: pointer;
   min-width: 150px;
   box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
   transition: all 0.2s ease;
 }
 
 .add-todo-priority-selector:hover {
   filter: brightness(0.98);
+  background-color: var(--secondary-bg);
 }
 
 .add-todo-priority-icon {
@@ -114,11 +118,12 @@
 .add-todo-priority-label {
   font-weight: 600;
   font-size: 14px;
+  color: var(--text-primary);
 }
 
 .add-todo-priority-placeholder {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .add-todo-priority-dropdown {
@@ -128,12 +133,10 @@
   left: 0;
   box-sizing: border-box;
   min-width: 150px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
   border-radius: 0 0 8px 8px;
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -4px var(--shadow-color);
   overflow: hidden;
   border-top: none;
   max-height: min(200px, 50vh);
@@ -148,10 +151,12 @@
   padding: 8px 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: var(--text-primary);
 }
 
 .add-todo-priority-option:hover {
   filter: brightness(0.96);
+  background-color: var(--secondary-bg);
 }
 
 @media (max-width: 630px) {

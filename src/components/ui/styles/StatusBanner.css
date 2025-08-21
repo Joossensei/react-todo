@@ -37,9 +37,9 @@
 }
 
 .status-banner.loading {
-  background: #f3f4f6;
-  color: #374151;
-  border-color: #e5e7eb;
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 .spin {

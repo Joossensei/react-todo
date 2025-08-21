@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="tile" x="0" y="0" width="512" height="512" patternUnits="userSpaceOnUse">
+      <rect width="512" height="512" fill="#0f1115"/>
+      <g fill="none" stroke="#ffffff" stroke-width="2" opacity="0.14" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Clipboard -->
+        <rect x="28" y="28" rx="8" ry="8" width="64" height="84"/>
+        <rect x="46" y="18" rx="6" ry="6" width="28" height="16"/>
+        <line x1="40" y1="54" x2="92" y2="54"/><line x1="40" y1="70" x2="92" y2="70"/><line x1="40" y1="86" x2="92" y2="86"/>
+        <!-- Checkbox -->
+        <rect x="140" y="34" width="22" height="22" rx="4"/><path d="M142 46 l6 6 l12 -12"/>
+        <line x1="170" y1="44" x2="222" y2="44"/><line x1="170" y1="58" x2="222" y2="58"/>
+        <!-- Bell -->
+        <path d="M280 92 c-18 0 -28 -14 -28 -28 v-12 c0 -18 14 -34 32 -38 v-6 c0 -6 6 -10 12 -10 s12 4 12 10 v6 c18 4 32 20 32 38 v12 c0 14 -10 28 -28 28 z"/>
+        <circle cx="280" cy="100" r="6"/>
+        <!-- Calendar -->
+        <rect x="360" y="24" width="88" height="74" rx="10"/><line x1="360" y1="46" x2="448" y2="46"/>
+        <line x1="380" y1="18" x2="380" y2="36"/><line x1="428" y1="18" x2="428" y2="36"/>
+        <circle cx="380" cy="60" r="4"/><circle cx="404" cy="60" r="4"/><circle cx="428" cy="60" r="4"/>
+        <!-- Pencil -->
+        <path d="M64 176 l60 -60 l20 20 l-60 60 l-28 8 z"/><path d="M124 116 l16 -16 l20 20 l-16 16 z"/>
+        <!-- Clock -->
+        <circle cx="212" cy="184" r="36"/><line x1="212" y1="184" x2="212" y2="162"/><line x1="212" y1="184" x2="232" y2="184"/>
+        <!-- Tag -->
+        <path d="M314 152 l64 0 l34 34 l-46 46 l-52 0 z"/><circle cx="350" cy="168" r="6"/>
+        <!-- Chat bubble -->
+        <path d="M420 176 h64 a20 20 0 0 1 20 20 v18 a20 20 0 0 1 -20 20 h-26 l-18 18 v-18 h-20 a20 20 0 0 1 -20 -20 v-18 a20 20 0 0 1 20 -20 z"/>
+        <!-- List -->
+        <rect x="24" y="276" rx="10" ry="10" width="120" height="92"/>
+        <line x1="44" y1="300" x2="124" y2="300"/><line x1="44" y1="320" x2="124" y2="320"/><line x1="44" y1="340" x2="124" y2="340"/>
+        <!-- Arrow/Progress -->
+        <path d="M196 292 h60 a20 20 0 0 1 20 20 v0"/><path d="M276 312 l-12 -8 l12 -8"/>
+        <!-- Cloud -->
+        <path d="M330 296 c0 -18 14 -32 32 -32 c10 0 20 6 26 14 c4 -2 8 -4 12 -4 c14 0 26 12 26 26 s-12 24 -26 24 h-70 c-12 0 -22 -10 -22 -22 s10 -22 22 -22"/>
+        <!-- Star -->
+        <path d="M462 286 l10 18 l20 4 l-14 14 l4 20 l-20 -10 l-20 10 l4 -20 l-14 -14 l20 -4 z"/>
+        <!-- Repeating small doodles -->
+        <circle cx="92" cy="230" r="3"/><circle cx="386" cy="230" r="3"/><circle cx="470" cy="120" r="3"/>
+        <path d="M172 252 q10 10 0 20"/><path d="M408 360 q10 10 0 20"/>
+        <path d="M78 404 c12 -8 24 -8 36 0"/><path d="M136 404 c12 -8 24 -8 36 0"/>
+        <!-- More icons in the lower half -->
+        <rect x="180" y="360" rx="12" ry="12" width="140" height="96"/>
+        <line x1="200" y1="384" x2="300" y2="384"/><line x1="200" y1="404" x2="300" y2="404"/><line x1="200" y1="424" x2="300" y2="424"/>
+        <!-- Check circle -->
+        <circle cx="360" cy="420" r="24"/><path d="M348 420 l8 8 l16 -16"/>
+        <!-- Paper plane -->
+        <path d="M28 456 l156 -60 l-72 72 l36 24 z"/>
+        <!-- Lightning/energy -->
+        <path d="M456 436 l-24 0 l18 -36 l-6 0 l8 -30 l24 0 l-18 36 l6 0 z"/>
+        <!-- Decorative dots -->
+        <circle cx="24" cy="24" r="1.6"/><circle cx="488" cy="24" r="1.6"/><circle cx="24" cy="488" r="1.6"/><circle cx="488" cy="488" r="1.6"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#tile)"/>
+</svg>

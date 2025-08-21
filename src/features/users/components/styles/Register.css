@@ -6,15 +6,16 @@
 }
 
 .register-card {
-  background: #ffffff;
+  background: var(--primary-bg);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px var(--shadow-color);
   padding: 24px;
+  border: 1px solid var(--border-color);
 }
 
 .register-title {
   margin: 0 0 4px 0;
-  color: #111827;
+  color: var(--text-primary);
   font-size: 24px;
   font-weight: 700;
   text-align: left;
@@ -22,7 +23,7 @@
 
 .register-subtitle {
   margin: 0 0 16px 0;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 14px;
   text-align: left;
 }
@@ -40,7 +41,7 @@
 }
 
 .label-icon {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .register-error {
@@ -62,9 +63,9 @@
   gap: 6px;
   margin-top: 4px;
   padding: 8px 10px;
-  border: 1px dashed #e5e7eb;
+  border: 1px dashed var(--border-color);
   border-radius: 6px;
-  background: #f9fafb;
+  background: var(--secondary-bg);
 }
 
 /* Password visibility toggle */
@@ -80,12 +81,12 @@
   background: transparent;
   border: none;
   padding: 4px;
-  color: #6b7280;
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
 .toggle-visibility-btn:hover {
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .checker-row {
@@ -108,7 +109,7 @@
 }
 
 .checker-row.optional span {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 640px) {

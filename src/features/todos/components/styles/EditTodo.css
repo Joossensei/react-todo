@@ -14,18 +14,20 @@
 
 .back-btn {
   background: transparent;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
+  color: var(--text-primary);
 }
 
 .back-btn:hover {
-  background: #f3f4f6;
+  background: var(--secondary-bg);
 }
 
 .page-title {
   margin: 0;
+  color: var(--text-primary);
 }
 
 .edit-todo-form {
@@ -45,15 +47,18 @@
   font-weight: 600;
   margin: 0;
   text-align: left;
+  color: var(--text-primary);
 }
 
 .text-input,
 .textarea-input,
 .select-input {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 10px;
   font-size: 14px;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
 }
 
 .filter-input {
@@ -69,6 +74,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 6px;
+  color: var(--text-primary);
 }
 
 .form-actions {
@@ -79,7 +85,7 @@
 }
 
 .primary-btn {
-  background: #2563eb;
+  background: var(--accent-color);
   border: none;
   color: #fff;
   padding: 8px 14px;
@@ -88,20 +94,20 @@
 }
 
 .primary-btn:hover {
-  background: #1d4ed8;
+  background: var(--accent-hover);
 }
 
 .secondary-btn {
   background: transparent;
-  border: 1px solid #ddd;
-  color: #111827;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .secondary-btn:hover {
-  background: #f3f4f6;
+  background: var(--secondary-bg);
 }
 
 .error-text {
@@ -125,11 +131,14 @@
   cursor: pointer;
   min-width: 220px;
   box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
 }
 
 .edit-todo-item-priority:hover {
   filter: brightness(0.98);
+  background-color: var(--secondary-bg);
 }
 
 .edit-todo-item-priority-icon {
@@ -138,6 +147,7 @@
 
 .edit-todo-item-priority-label {
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .edit-todo-item-priority-dropdown {
@@ -147,12 +157,10 @@
   left: 0;
   box-sizing: border-box;
   min-width: 220px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
   border-radius: 0 0 8px 8px;
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -4px var(--shadow-color);
   overflow: hidden;
   border-top: none;
   max-height: min(200px, 50vh);
@@ -166,10 +174,12 @@
   gap: 8px;
   padding: 8px 10px;
   cursor: pointer;
+  color: var(--text-primary);
 }
 
 .edit-todo-item-priority-option:hover {
   filter: brightness(0.96);
+  background-color: var(--secondary-bg);
 }
 
 .description-row {

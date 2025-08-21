@@ -1,10 +1,11 @@
 .priority-form {
   margin: 0 auto;
   padding: 24px;
-  background: white;
+  background: var(--primary-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-color);
   box-sizing: border-box;
+  border: 1px solid var(--border-color);
 }
 
 .form-group {
@@ -21,7 +22,7 @@
   display: block;
   margin-bottom: 6px;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 14px;
 }
 
@@ -30,17 +31,19 @@
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.2s ease;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-group input.error,
@@ -58,7 +61,7 @@
   width: 50px;
   height: 40px;
   padding: 0;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
 }
@@ -73,7 +76,7 @@
 }
 
 .help-text {
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 12px;
   margin-top: 4px;
   display: block;
@@ -92,7 +95,7 @@
   justify-content: flex-end;
   margin-top: 32px;
   padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-color);
 }
 
 .btn-primary,
@@ -107,24 +110,24 @@
 }
 
 .btn-primary {
-  background-color: #3b82f6;
+  background-color: var(--accent-color);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #2563eb;
+  background-color: var(--accent-hover);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background-color: #e5e7eb;
-  border-color: #9ca3af;
+  background-color: var(--border-color);
+  border-color: var(--text-secondary);
 }
 
 /* Responsive adjustments */

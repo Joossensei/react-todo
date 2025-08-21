@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router";
 import { FaUser } from "react-icons/fa";
 import { BsIncognito } from "react-icons/bs";
 import { userService } from "../../features/users/services/userService";
+import ThemeToggle from "./ThemeToggle";
 
 const MenuBar = () => {
   const location = useLocation();
@@ -51,6 +52,9 @@ const MenuBar = () => {
               </Link>
             </li>
           ))}
+          <li>
+            <ThemeToggle />
+          </li>
         </ul>
       </div>
     </nav>

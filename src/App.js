@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Outlet, Navigate } from "react-router";
 import "./App.css";
 import MenuBar from "./components/ui/MenuBar";
@@ -11,6 +11,18 @@ import { userService } from "./features/users/services/userService";
 userService.installInterceptors({ loginPath: "/login" });
 
 function App() {
+  useEffect(() => {
+    // Initialize theme from localStorage or system preference
+    const savedTheme = localStorage.getItem("theme");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    
+    if (savedTheme) {
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    } else {
+      document.documentElement.setAttribute("data-theme", systemPrefersDark ? "dark" : "light");
+    }
+  }, []);
+
   function AppLayout() {
     return (
       <div className="App">
