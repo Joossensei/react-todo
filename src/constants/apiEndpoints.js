@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
     UPDATE: (key) => `/priority/${key}`,
     DELETE: (key) => `/priority/${key}`,
     PATCH: (key) => `/priority/${key}`,
+    REORDER: (key) => `/priority/${key}/reorder`,
   },
   USER: {
     LIST: "/users",

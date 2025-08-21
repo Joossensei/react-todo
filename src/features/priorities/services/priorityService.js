@@ -101,10 +101,21 @@ export const priorityService = {
   // Patch priority
   patchPriority: async (id, priorityData) => {
     const response = await apiClient.patch(
-      API_ENDPOINTS.PRIORITIES.UPDATE(id),
+      API_ENDPOINTS.PRIORITIES.PATCH(id),
       priorityData,
     );
     // Invalidate cache after updating
+    localStorage.removeItem(PRIORITY_CACHE_KEY);
+    return response.data;
+  },
+
+  // Reorder priorities
+  reorderPriorities: async (key, { fromOrder, toOrder }) => {
+    const response = await apiClient.patch(
+      API_ENDPOINTS.PRIORITIES.REORDER(key),
+      { fromOrder, toOrder },
+    );
+
     localStorage.removeItem(PRIORITY_CACHE_KEY);
     return response.data;
   },

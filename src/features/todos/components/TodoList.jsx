@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // CSS
 import "./styles/TodoList.css";
 // Components
@@ -30,6 +30,7 @@ import { sortPriorities } from "../../priorities/utils/priorityUtils";
 import { useNavigate } from "react-router";
 // import { userService } from "../../services/userService";
 import StatusBanner from "../../../components/ui/StatusBanner";
+import { getPriorityIcon } from "../../../constants/priorityIcons";
 
 // Create the TodoList component
 const TodoList = observer((props) => {
@@ -48,11 +49,60 @@ const TodoList = observer((props) => {
   // Local UI state for mobile menu only. All server-driven state lives in the store.
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // State for priority filter dropdown
+  const [isPriorityFilterDropdownOpen, setIsPriorityFilterDropdownOpen] =
+    useState(false);
+  const priorityFilterDropdownRef = useRef(null);
+
   // Initial load
   useEffect(() => {
     todoStore.fetchPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Close priority filter dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        priorityFilterDropdownRef.current &&
+        !priorityFilterDropdownRef.current.contains(event.target)
+      ) {
+        setIsPriorityFilterDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Function to handle priority filter selection
+  const handlePriorityFilterSelect = (priorityValue) => {
+    setIsPriorityFilterDropdownOpen(false);
+    todoStore.setPriorityFilter(priorityValue);
+  };
+
+  // Helper function to get priority icon component
+  const getPriorityIconComponent = (priority) => {
+    const IconComponent = getPriorityIcon(priority, priority?.icon);
+    return (
+      <IconComponent
+        style={{
+          color:
+            priority.color.charAt(0) === "#" && priority.color.charAt(1) === "0"
+              ? "white"
+              : "black",
+        }}
+      />
+    );
+  };
+
+  // Get current priority data for filter
+  const getCurrentPriorityFilter = (priorityValue) => {
+    if (!priorityValue) return null;
+    return priorities.find((p) => p.key === priorityValue);
+  };
 
   const filter =
     todoStore.completedFilter === true
@@ -201,25 +251,103 @@ const TodoList = observer((props) => {
                 </div>
               </div>
 
-              <div className="filter-container">
-                <FaFlag className="priority-icon" />
-                <div className="custom-select">
-                  <select
+              <div className="filter-container" ref={priorityFilterDropdownRef}>
+                <div className="priority-filter-field">
+                  <div
                     id="filterPriority"
-                    className="filter-select"
-                    value={filterPriority}
-                    onChange={(e) =>
-                      todoStore.setPriorityFilter(e.target.value)
-                    }
-                    disabled={prioritiesLoading}
+                    className="priority-filter-selector"
+                    style={{
+                      backgroundColor:
+                        getCurrentPriorityFilter(filterPriority)?.color ||
+                        "#e5e7eb",
+                      borderRadius: isPriorityFilterDropdownOpen
+                        ? "6px 6px 0 0"
+                        : "6px",
+                      border: isPriorityFilterDropdownOpen
+                        ? "1px 1px 0 1px solid #e5e7eb"
+                        : "1px solid #e5e7eb",
+                      color:
+                        getCurrentPriorityFilter(filterPriority)?.color.charAt(
+                          0,
+                        ) === "#" &&
+                        getCurrentPriorityFilter(filterPriority)?.color.charAt(
+                          1,
+                        ) === "0"
+                          ? "white"
+                          : "black",
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsPriorityFilterDropdownOpen(
+                        !isPriorityFilterDropdownOpen,
+                      );
+                    }}
                   >
-                    <option value="">All Priorities</option>
-                    {sortPriorities(priorities).map((priority) => (
-                      <option key={priority.key} value={priority.key}>
-                        {priority.name}
-                      </option>
-                    ))}
-                  </select>
+                    <div className="priority-filter-icon">
+                      {getCurrentPriorityFilter(filterPriority) ? (
+                        getPriorityIconComponent(
+                          getCurrentPriorityFilter(filterPriority),
+                        )
+                      ) : (
+                        <FaFlag />
+                      )}
+                    </div>
+                    <span className="priority-filter-label">
+                      {getCurrentPriorityFilter(filterPriority)?.name ||
+                        "All Priorities"}
+                    </span>
+                  </div>
+
+                  {isPriorityFilterDropdownOpen && (
+                    <div
+                      className="priority-filter-dropdown"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div
+                        className="priority-filter-option"
+                        style={{
+                          backgroundColor: "#e5e7eb",
+                          color: "black",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePriorityFilterSelect("");
+                        }}
+                      >
+                        <div className="priority-filter-icon">
+                          <FaFlag />
+                        </div>
+                        <span className="priority-filter-label">
+                          All Priorities
+                        </span>
+                      </div>
+                      {sortPriorities(priorities).map((priority) => (
+                        <div
+                          key={priority.key}
+                          className="priority-filter-option"
+                          style={{
+                            backgroundColor: priority.color,
+                            color:
+                              priority.color.charAt(0) === "#" &&
+                              priority.color.charAt(1) === "0"
+                                ? "white"
+                                : "black",
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePriorityFilterSelect(priority.key);
+                          }}
+                        >
+                          <div className="priority-filter-icon">
+                            {getPriorityIconComponent(priority)}
+                          </div>
+                          <span className="priority-filter-label">
+                            {priority.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./styles/AddTodo.css";
 import { validateTodo } from "../utils/todoUtils";
+import { getPriorityIcon } from "../../../constants/priorityIcons";
 
 const AddTodo = ({
   onAddTodo,
@@ -12,6 +13,52 @@ const AddTodo = ({
   prioritiesLoading,
 }) => {
   const [invalidAdd, setInvalidAdd] = useState(false);
+  const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
+  const priorityDropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        priorityDropdownRef.current &&
+        !priorityDropdownRef.current.contains(event.target)
+      ) {
+        setIsPriorityDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Function to handle priority selection
+  const handlePrioritySelect = (priorityValue) => {
+    setIsPriorityDropdownOpen(false);
+    setNewTodo({ ...newTodo, priority: priorityValue });
+  };
+
+  // Helper function to get priority icon component
+  const getPriorityIconComponent = (priority) => {
+    const IconComponent = getPriorityIcon(priority, priority?.icon);
+    return (
+      <IconComponent
+        style={{
+          color:
+            priority.color.charAt(0) === "#" && priority.color.charAt(1) === "0"
+              ? "white"
+              : "black",
+        }}
+      />
+    );
+  };
+
+  // Get current priority data
+  const getCurrentPriority = (priorityValue) => {
+    if (!priorityValue) return null;
+    return priorities.find((p) => p.key === priorityValue);
+  };
 
   const handleAddTodo = () => {
     // Validate the todo input
@@ -63,25 +110,81 @@ const AddTodo = ({
             <button className="add-todo-form-btn" onClick={handleAddTodo}>
               Add +
             </button>
-            <select
-              className="add-todo-form-priority-select"
-              value={newTodo.priority}
-              onChange={(e) =>
-                setNewTodo({ ...newTodo, priority: e.target.value })
-              }
-              disabled={prioritiesLoading}
-            >
-              <option value="" disabled>
-                {prioritiesLoading
-                  ? "Loading priorities..."
-                  : "Select Priority"}
-              </option>
-              {priorities.map((priority) => (
-                <option key={priority.key} value={priority.key}>
-                  {priority.name}
-                </option>
-              ))}
-            </select>
+            <div className="add-todo-priority-field" ref={priorityDropdownRef}>
+              <div
+                className="add-todo-priority-selector"
+                style={{
+                  backgroundColor:
+                    getCurrentPriority(newTodo.priority)?.color || "#e5e7eb",
+                  borderRadius: isPriorityDropdownOpen ? "6px 6px 0 0" : "6px",
+                  border: isPriorityDropdownOpen
+                    ? "1px 1px 0 1px solid #e5e7eb"
+                    : "1px solid #e5e7eb",
+                  color:
+                    getCurrentPriority(newTodo.priority)?.color.charAt(0) ===
+                      "#" &&
+                    getCurrentPriority(newTodo.priority)?.color.charAt(1) ===
+                      "0"
+                      ? "white"
+                      : "black",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsPriorityDropdownOpen(!isPriorityDropdownOpen);
+                }}
+              >
+                <div className="add-todo-priority-icon">
+                  {getCurrentPriority(newTodo.priority) ? (
+                    getPriorityIconComponent(
+                      getCurrentPriority(newTodo.priority),
+                    )
+                  ) : (
+                    <span className="add-todo-priority-placeholder">
+                      {prioritiesLoading ? "Loading..." : "Select Priority"}
+                    </span>
+                  )}
+                </div>
+                <span className="add-todo-priority-label">
+                  {getCurrentPriority(newTodo.priority)?.name ||
+                    (prioritiesLoading
+                      ? "Loading priorities..."
+                      : "Select Priority")}
+                </span>
+              </div>
+
+              {isPriorityDropdownOpen && (
+                <div
+                  className="add-todo-priority-dropdown"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {priorities.map((priority) => (
+                    <div
+                      key={priority.key}
+                      className="add-todo-priority-option"
+                      style={{
+                        backgroundColor: priority.color,
+                        color:
+                          priority.color.charAt(0) === "#" &&
+                          priority.color.charAt(1) === "0"
+                            ? "white"
+                            : "black",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePrioritySelect(priority.key);
+                      }}
+                    >
+                      <div className="add-todo-priority-icon">
+                        {getPriorityIconComponent(priority)}
+                      </div>
+                      <span className="add-todo-priority-label">
+                        {priority.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

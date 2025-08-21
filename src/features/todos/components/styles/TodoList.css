@@ -199,6 +199,72 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Priority Filter Dropdown Styles */
+.priority-filter-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.priority-filter-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 225px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.priority-filter-selector:hover {
+  filter: brightness(0.98);
+}
+
+.priority-filter-icon {
+  display: inline-flex;
+}
+
+.priority-filter-label {
+  font-weight: 600;
+}
+
+.priority-filter-dropdown {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  min-width: 225px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-top: none;
+  max-height: min(200px, 50vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.priority-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.priority-filter-option:hover {
+  filter: brightness(0.96);
+}
+
 .mobile-menu-section {
   margin-bottom: 20px;
 }

@@ -5,9 +5,10 @@ import { todoService } from "../services/todoService";
 import { getPriorityIcon } from "../../../constants/priorityIcons";
 import { useParams, useNavigate } from "react-router";
 import StatusBanner from "../../../components/ui/StatusBanner";
-import { todoStore } from "../stores/TodoStore";
+import { useStores } from "../../../stores/RootStoreContext";
 
 const EditTodo = () => {
+  const { todoStore } = useStores();
   const { id } = useParams();
   const todoKey = id;
 

@@ -23,7 +23,8 @@ export class UserListStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.error = e?.response?.data?.detail || e?.message || "Failed to fetch users";
+        this.error =
+          e?.response?.data?.detail || e?.message || "Failed to fetch users";
         this.loading = false;
       });
     }

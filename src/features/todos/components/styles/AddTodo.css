@@ -81,16 +81,77 @@
   border-radius: 5px;
 }
 
-.add-todo-form-priority-select {
-  padding: 10px 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #ffffff;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-  min-width: 50px;
+/* Add Todo Priority Dropdown Styles */
+.add-todo-priority-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   margin-left: 10px;
+}
+
+.add-todo-priority-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 150px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.add-todo-priority-selector:hover {
+  filter: brightness(0.98);
+}
+
+.add-todo-priority-icon {
+  display: inline-flex;
+}
+
+.add-todo-priority-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.add-todo-priority-placeholder {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.add-todo-priority-dropdown {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  min-width: 150px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-top: none;
+  max-height: min(200px, 50vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.add-todo-priority-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-todo-priority-option:hover {
+  filter: brightness(0.96);
 }
 
 @media (max-width: 630px) {

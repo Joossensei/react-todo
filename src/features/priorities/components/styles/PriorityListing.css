@@ -164,9 +164,53 @@
   border-bottom: none;
 }
 
+/* Drag and Drop Styles */
+.priority-table tr.dragging {
+  opacity: 0.5;
+  background-color: #f3f4f6;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.priority-table tr.dragging td {
+  border-bottom: none;
+}
+
+/* Disable text selection during drag */
+.priority-table tr.dragging * {
+  user-select: none;
+}
+
 /* Table Cell Styles */
 .order-cell {
   width: 80px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #9ca3af;
+  cursor: grab;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.drag-handle:hover {
+  color: #6b7280;
+  background-color: #f3f4f6;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  color: #374151;
+  background-color: #e5e7eb;
 }
 
 .order-badge {

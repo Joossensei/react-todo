@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./styles/User.css";
 import { userService } from "../services/userService";
 import StatusBanner from "../../../components/ui/StatusBanner";
-import { userStore } from "../stores/UserStore";
-import { userListStore } from "../stores/UserListStore";
+import { useStores } from "../../../stores/RootStoreContext";
+import { observer } from "mobx-react-lite";
 import {
   FaUser,
   FaEnvelope,
@@ -18,14 +18,13 @@ import {
   FaEyeSlash,
 } from "react-icons/fa";
 
-const User = () => {
+const User = observer(() => {
+  const { userStore, userListStore } = useStores();
   const {
     user,
     loading: userLoading,
     error: userError,
     fetchUser: fetchCurrentUser,
-    updatePassword,
-    logout,
     updateUser,
   } = userStore;
   const {
@@ -81,7 +80,7 @@ const User = () => {
       await fetchUsersList();
     }
     load();
-  }, []);
+  }, [fetchCurrentUser, fetchUsersList]);
 
   const otherUsers = useMemo(() => {
     if (!user || !usersList) return [];
@@ -568,6 +567,6 @@ const User = () => {
       </div>
     </div>
   );
-};
+});
 
 export default User;

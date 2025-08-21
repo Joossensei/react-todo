@@ -136,6 +136,30 @@ export class PriorityStore {
     }
   }
 
+  async patchPriority(key, priorityData) {
+    try {
+      this.error = null;
+      await priorityService.patchPriority(key, priorityData);
+      await this.refetch(true);
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.message || "Failed to patch priority";
+      });
+    }
+  }
+
+  async reorderPriorities(key, { fromOrder, toOrder }) {
+    try {
+      this.error = null;
+      await priorityService.reorderPriorities(key, { fromOrder, toOrder });
+      await this.refetch(true);
+    } catch (e) {
+      runInAction(() => {
+        this.error = e?.message || "Failed to reorder priorities";
+      });
+    }
+  }
+
   async createPriority(priorityData) {
     try {
       this.error = null;

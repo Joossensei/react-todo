@@ -12,6 +12,11 @@ export class UserStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
+  // Check if user is authenticated
+  get isAuthenticated() {
+    return !!userService.getToken() && !!userService.getUserKey();
+  }
+
   async fetchUser() {
     this.loading = true;
     this.error = null;
@@ -23,7 +28,8 @@ export class UserStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.error = e?.response?.data?.detail || e?.message || "Failed to fetch user";
+        this.error =
+          e?.response?.data?.detail || e?.message || "Failed to fetch user";
         this.loading = false;
       });
     }
@@ -40,7 +46,10 @@ export class UserStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.error = e?.response?.data?.detail || e?.message || "Failed to update password";
+        this.error =
+          e?.response?.data?.detail ||
+          e?.message ||
+          "Failed to update password";
         this.loading = false;
       });
       throw e;
@@ -65,7 +74,8 @@ export class UserStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.error = e?.response?.data?.detail || e?.message || "Failed to login";
+        this.error =
+          e?.response?.data?.detail || e?.message || "Failed to login";
         this.loading = false;
       });
       throw e;
@@ -83,7 +93,8 @@ export class UserStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.error = e?.response?.data?.detail || e?.message || "Failed to update user";
+        this.error =
+          e?.response?.data?.detail || e?.message || "Failed to update user";
         this.loading = false;
       });
       throw e;
@@ -101,7 +112,8 @@ export class UserStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.error = e?.response?.data?.detail || e?.message || "Failed to delete user";
+        this.error =
+          e?.response?.data?.detail || e?.message || "Failed to delete user";
         this.loading = false;
       });
       throw e;
@@ -119,7 +131,8 @@ export class UserStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.error = e?.response?.data?.detail || e?.message || "Failed to create user";
+        this.error =
+          e?.response?.data?.detail || e?.message || "Failed to create user";
         this.loading = false;
       });
       throw e;
