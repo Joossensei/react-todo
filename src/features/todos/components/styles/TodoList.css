@@ -268,6 +268,80 @@
   filter: brightness(0.96);
 }
 
+/* Status Filter Styles */
+.status-filter-icon {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.status-filter-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.status-filter-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 150px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.status-filter-selector:hover {
+  filter: brightness(0.98);
+  background-color: var(--secondary-bg);
+}
+
+.status-filter-dropdown {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  min-width: 150px;
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    0 10px 15px -3px var(--shadow-color),
+    0 4px 6px -4px var(--shadow-color);
+  overflow: hidden;
+  border-top: none;
+  max-height: min(200px, 50vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.status-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.status-filter-option:hover {
+  filter: brightness(0.96);
+  background-color: var(--secondary-bg);
+}
+
+.status-filter-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
 .mobile-menu-section {
   margin-bottom: 20px;
 }
@@ -471,4 +545,85 @@
   .filter-select {
     width: 100%;
   }
+}
+
+/* Undo Toast Styles */
+.undo-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+
+.undo-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  min-width: 200px;
+}
+
+.undo-toast-content span {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.undo-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.undo-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.undo-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Swipe animation for todo items */
+.todo-item.swiping {
+  transform: translateX(-100px);
+  transition: transform 0.3s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.todo-item.swipe-delete {
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: all 0.3s ease;
 }

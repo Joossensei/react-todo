@@ -5,6 +5,7 @@ import MenuBar from "./components/ui/MenuBar";
 import { FaGithub, FaCode } from "react-icons/fa";
 import { TodoList, EditTodo } from "./features/todos";
 import { PriorityList, EditPriority } from "./features/priorities";
+import { StatusList, EditStatus } from "./features/statuses";
 import { LoginComponent, RegisterComponent, User } from "./features/users";
 import { userService } from "./features/users/services/userService";
 
@@ -14,12 +15,17 @@ function App() {
   useEffect(() => {
     // Initialize theme from localStorage or system preference
     const savedTheme = localStorage.getItem("theme");
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    
+    const systemPrefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+
     if (savedTheme) {
       document.documentElement.setAttribute("data-theme", savedTheme);
     } else {
-      document.documentElement.setAttribute("data-theme", systemPrefersDark ? "dark" : "light");
+      document.documentElement.setAttribute(
+        "data-theme",
+        systemPrefersDark ? "dark" : "light",
+      );
     }
   }, []);
 
@@ -59,6 +65,9 @@ function App() {
         <Route path="/priorities" element={<PriorityList />} />
         <Route path="/priorities/new" element={<EditPriority />} />
         <Route path="/priorities/:id" element={<EditPriority />} />
+        <Route path="/statuses" element={<StatusList />} />
+        <Route path="/statuses/new" element={<EditStatus />} />
+        <Route path="/statuses/:key" element={<EditStatus />} />
         <Route path="/login" element={<LoginComponent />} />
         <Route path="/register" element={<RegisterComponent />} />
         <Route path="/user" element={<User />} />

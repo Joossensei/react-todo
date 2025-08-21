@@ -28,6 +28,14 @@ export const API_ENDPOINTS = {
     TOKEN: "/token",
     FORGOT_PASSWORD: (key) => `/user/${key}/reset-password`,
   },
+  STATUS: {
+    LIST: "/statuses",
+    CREATE: "/statuses",
+    GET: (key) => `/status/${key}`,
+    UPDATE: (key) => `/status/${key}`,
+    DELETE: (key) => `/status/${key}`,
+    PATCH: (key) => `/status/${key}`,
+  },
   GENERAL: {
     HEALTH: "/health",
   },

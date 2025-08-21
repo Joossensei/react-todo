@@ -61,8 +61,7 @@ apiClient.interceptors.response.use(
     // Preserve axios error context for callers that need it
     friendlyError.name = error?.name || "AxiosError";
     friendlyError.code = error?.code;
-    friendlyError.config = error?.config;
-    friendlyError.response = error?.response;
+    friendlyError.message = normalizedMessage;
 
     console.error("API Error:", {
       status,

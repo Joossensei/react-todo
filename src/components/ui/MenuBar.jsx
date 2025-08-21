@@ -11,6 +11,7 @@ const MenuBar = () => {
   const menuItems = [
     { id: "home", label: "Home", icon: "🏠", to: "/" },
     { id: "priorities", label: "Priorities", icon: "⭐", to: "/priorities" },
+    { id: "statuses", label: "Statuses", icon: "📊", to: "/statuses" },
     { id: "user", label: "", icon: "👤", to: "/user" },
   ];
 

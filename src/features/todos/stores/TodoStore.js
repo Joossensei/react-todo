@@ -12,6 +12,7 @@ export class TodoStore {
   sortBy = "incomplete-priority-desc";
   completedFilter = undefined;
   priorityFilter = "";
+  statusFilter = "";
   nextLink = null;
   prevLink = null;
 
@@ -66,6 +67,11 @@ export class TodoStore {
     this.fetchPage(1);
   }
 
+  setStatusFilter(statusKey) {
+    this.statusFilter = statusKey || "";
+    this.fetchPage(1);
+  }
+
   invalidateCache() {
     this.cache.clear();
     this.fetchPage(1);
@@ -81,6 +87,7 @@ export class TodoStore {
         sort: this.sortBy,
         completed: this.completedFilter,
         priority: this.priorityFilter || undefined,
+        status: this.statusFilter || undefined,
       });
       const cacheKey = `${queryKey}|p=${targetPage}`;
       if (this.cache.has(cacheKey) && !force) {
@@ -94,6 +101,7 @@ export class TodoStore {
           sort: this.sortBy,
           completed: this.completedFilter,
           priority: this.priorityFilter || undefined,
+          status: this.statusFilter || undefined,
         });
         console.log("cache miss", data);
         runInAction(() => {
@@ -125,6 +133,7 @@ export class TodoStore {
         sort: this.sortBy,
         completed: this.completedFilter,
         priority: this.priorityFilter || undefined,
+        status: this.statusFilter || undefined,
       });
       const cacheKey = `${queryKey}|p=${nextPage}`;
       runInAction(() => {
@@ -147,6 +156,7 @@ export class TodoStore {
         sort: this.sortBy,
         completed: this.completedFilter,
         priority: this.priorityFilter || undefined,
+        status: this.statusFilter || undefined,
       });
       const cacheKey = `${queryKey}|p=${prevPage}`;
       runInAction(() => {
@@ -208,7 +218,7 @@ export class TodoStore {
     }
   }
 
-  async editTodo(key, { title, priority, description }) {
+  async editTodo(key, { title, priority, status, description }) {
     try {
       this.error = null;
       const current = this.todos.find((t) => t.key === key);
@@ -216,6 +226,7 @@ export class TodoStore {
       await todoService.patchTodo(key, {
         title: title ?? current.title,
         priority: priority ?? current.priority,
+        status: status ?? current.status,
         completed: current.completed,
         description: description ?? current.description,
       });
@@ -228,13 +239,14 @@ export class TodoStore {
     }
   }
 
-  async addTodo({ title, priority, description = "" }) {
+  async addTodo({ title, priority, status, description = "" }) {
     try {
       this.error = null;
       const user_key = userService.getUserKey();
       const payload = {
         title: String(title || "").trim(),
         priority,
+        status,
         description,
         completed: false,
         user_key,

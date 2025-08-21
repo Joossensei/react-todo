@@ -4,12 +4,20 @@ import { API_ENDPOINTS } from "../../../constants/apiEndpoints";
 
 export const todoService = {
   // Get paginated todos with server-side sort/filter
-  getTodos: async ({ page = 1, size = 10, sort, completed, priority } = {}) => {
+  getTodos: async ({
+    page = 1,
+    size = 10,
+    sort,
+    completed,
+    priority,
+    status,
+  } = {}) => {
     try {
       const params = { page, size };
       if (sort) params.sort = sort;
       if (typeof completed === "boolean") params.completed = completed;
       if (priority) params.priority = priority;
+      if (status) params.status = status;
 
       const response = await apiClient.get(API_ENDPOINTS.TODOS.LIST, {
         params,
@@ -18,7 +26,7 @@ export const todoService = {
       return response.data;
     } catch (error) {
       console.error("Failed to fetch todos:", error);
-      throw error;
+      throw JSON.parse(error);
     }
   },
 

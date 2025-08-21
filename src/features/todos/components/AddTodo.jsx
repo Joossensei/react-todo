@@ -11,12 +11,16 @@ const AddTodo = ({
   setNewTodo,
   priorities,
   prioritiesLoading,
+  statuses,
+  statusesLoading,
 }) => {
   const [invalidAdd, setInvalidAdd] = useState(false);
   const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
   const priorityDropdownRef = useRef(null);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const statusDropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -24,6 +28,12 @@ const AddTodo = ({
         !priorityDropdownRef.current.contains(event.target)
       ) {
         setIsPriorityDropdownOpen(false);
+      }
+      if (
+        statusDropdownRef.current &&
+        !statusDropdownRef.current.contains(event.target)
+      ) {
+        setIsStatusDropdownOpen(false);
       }
     };
 
@@ -37,6 +47,12 @@ const AddTodo = ({
   const handlePrioritySelect = (priorityValue) => {
     setIsPriorityDropdownOpen(false);
     setNewTodo({ ...newTodo, priority: priorityValue });
+  };
+
+  // Function to handle status selection
+  const handleStatusSelect = (statusValue) => {
+    setIsStatusDropdownOpen(false);
+    setNewTodo({ ...newTodo, status: statusValue });
   };
 
   // Helper function to get priority icon component
@@ -54,10 +70,31 @@ const AddTodo = ({
     );
   };
 
+  // Helper function to get status icon component
+  const getStatusIconComponent = (status) => {
+    return (
+      <i
+        className={status.icon}
+        style={{
+          color:
+            status.color.charAt(0) === "#" && status.color.charAt(1) === "0"
+              ? "white"
+              : "black",
+        }}
+      />
+    );
+  };
+
   // Get current priority data
   const getCurrentPriority = (priorityValue) => {
     if (!priorityValue) return null;
     return priorities.find((p) => p.key === priorityValue);
+  };
+
+  // Get current status data
+  const getCurrentStatus = (statusValue) => {
+    if (!statusValue) return null;
+    return statuses.find((s) => s.key === statusValue);
   };
 
   const handleAddTodo = () => {
@@ -110,6 +147,8 @@ const AddTodo = ({
             <button className="add-todo-form-btn" onClick={handleAddTodo}>
               Add +
             </button>
+
+            {/* Priority Dropdown */}
             <div className="add-todo-priority-field" ref={priorityDropdownRef}>
               <div
                 className="add-todo-priority-selector"
@@ -185,6 +224,82 @@ const AddTodo = ({
                 </div>
               )}
             </div>
+
+            {/* Status Dropdown */}
+            {statuses.length > 0 && (
+              <div className="add-todo-status-field" ref={statusDropdownRef}>
+                <div
+                  className="add-todo-status-selector"
+                  style={{
+                    backgroundColor:
+                      getCurrentStatus(newTodo.status)?.color || "#e5e7eb",
+                    borderRadius: isStatusDropdownOpen ? "6px 6px 0 0" : "6px",
+                    border: isStatusDropdownOpen
+                      ? "1px 1px 0 1px solid #e5e7eb"
+                      : "1px solid #e5e7eb",
+                    color:
+                      getCurrentStatus(newTodo.status)?.color.charAt(0) ===
+                        "#" &&
+                      getCurrentStatus(newTodo.status)?.color.charAt(1) === "0"
+                        ? "white"
+                        : "black",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsStatusDropdownOpen(!isStatusDropdownOpen);
+                  }}
+                >
+                  <div className="add-todo-status-icon">
+                    {getCurrentStatus(newTodo.status) ? (
+                      getStatusIconComponent(getCurrentStatus(newTodo.status))
+                    ) : (
+                      <span className="add-todo-status-placeholder">
+                        {statusesLoading ? "Loading..." : "Select Status"}
+                      </span>
+                    )}
+                  </div>
+                  <span className="add-todo-status-label">
+                    {getCurrentStatus(newTodo.status)?.name ||
+                      (statusesLoading
+                        ? "Loading statuses..."
+                        : "Select Status")}
+                  </span>
+                </div>
+
+                {isStatusDropdownOpen && (
+                  <div
+                    className="add-todo-status-dropdown"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {statuses.map((status) => (
+                      <div
+                        key={status.key}
+                        className="add-todo-status-option"
+                        style={{
+                          backgroundColor: status.color,
+                          color:
+                            status.color.charAt(0) === "#" &&
+                            status.color.charAt(1) === "0"
+                              ? "white"
+                              : "black",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStatusSelect(status.key);
+                        }}
+                      >
+                        <div className="add-todo-status-icon">
+                          {getStatusIconComponent(status)}
+                        </div>
+                        <span className="add-todo-status-label">
+                          {status.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
